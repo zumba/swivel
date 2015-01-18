@@ -19,7 +19,15 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         return [
             [
                 [ 'a' => [1] ],
-                [ 'a' => 1 ]
+                [ 'a' => Bucket::FIRST ]
+            ],
+            [
+                [ 'a' => [1, 2] ],
+                [ 'a' => Bucket::FIRST | Bucket::SECOND ]
+            ],
+            [
+                [ 'a' => [6, 7], 'a.b' => [7] ],
+                [ 'a' => Bucket::SIXTH | Bucket::SEVENTH, 'a.b' => Bucket::SEVENTH ]
             ]
         ];
     }
