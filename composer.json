@@ -1,0 +1,29 @@
+{
+    "name": "zumba/swivel",
+    "type": "library",
+    "description": "Strategy driven feature toggles",
+    "keywords": ["feature", "flag", "toggle", "bit", "strategy"],
+    "homepage": "http://tech.zumba.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Zumba Fitness, LLC"
+        },
+        {
+            "name": "Stephen Young",
+            "email": "stephen.young@zumba.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*",
+        "zumba/zumba-coding-standards": "~1.0"
+    },
+    "autoload": {
+        "psr-4" : {
+            "Zumba\\Swivel\\" : "./src"
+        }
+    }
+}
