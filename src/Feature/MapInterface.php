@@ -11,4 +11,12 @@ interface MapInterface {
      * @return boolean
      */
     public function enabled($slug, $index);
+
+    /**
+     * Parse a human readable map into a map of bitmasks
+     *
+     * @param array $map
+     * @return array
+     */
+    public function parse(array $map);
 }

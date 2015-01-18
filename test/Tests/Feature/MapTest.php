@@ -8,6 +8,23 @@ use \Zumba\Swivel\Bucket;
 class MapTest extends \PHPUnit_Framework_TestCase {
 
     /**
+     * @dataProvider parseProvider
+     */
+    public function testParse($map, $expected) {
+        $featureMap = new Map($map);
+        $this->assertEquals($expected, $featureMap->parse($map));
+    }
+
+    public function parseProvider() {
+        return [
+            [
+                [ 'a' => [1] ],
+                [ 'a' => 1 ]
+            ]
+        ];
+    }
+
+    /**
      * @dataProvider enabledProvider
      */
     public function testEnabled($assertion, $slug, $index, $map) {
@@ -19,58 +36,58 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         return [
             [
                 'assertTrue', 'Test.version.a', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1]
                 ]
             ],
             [
                 'assertTrue', 'Test.version', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1]
                 ]
             ],
             [
                 'assertTrue', 'Test', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1]
                 ]
             ],
             [
                 'assertTrue', 'Test.version', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Feature::OFF
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => []
                 ]
             ],
             [
                 'assertFalse', 'Test.version.a', Bucket::FIRST, [
-                    'Test' => Feature::OFF,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1]
                 ]
             ],
             [
                 'assertFalse', 'Test.version.a', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Feature::OFF,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [1],
+                    'Test.version' => [],
+                    'Test.version.a' => [1]
                 ]
             ],
             [
                 'assertFalse', 'Test.version.b', Bucket::FIRST, [
-                    'Test' => Bucket::FIRST,
-                    'Test.version' => Bucket::FIRST,
-                    'Test.version.a' => Bucket::FIRST
+                    'Test' => [],
+                    'Test.version' => [],
+                    'Test.version.a' => []
                 ]
             ],
             [
                 'assertTrue', 'Test.version.a', Bucket::THIRD, [
-                    'Test' => Bucket::SECOND | Bucket::THIRD | Bucket::FIFTH,
-                    'Test.version' => Bucket::SECOND | Bucket::THIRD,
-                    'Test.version.a' => Bucket::THIRD
+                    'Test' => [2, 3, 5],
+                    'Test.version' => [2, 3],
+                    'Test.version.a' => [3]
                 ]
             ],
         ];
