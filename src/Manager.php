@@ -14,10 +14,10 @@ class Manager implements ManagerInterface {
     /**
      * Zumba\Swivel\Manager
      *
-     * @param BucketInterface|null $bucket
+     * @param ConfigInterface $config
      */
-    public function __construct(BucketInterface $bucket = null) {
-        $this->setBucket($bucket);
+    public function __construct(ConfigInterface $config) {
+        $this->setBucket($config->getBucket());
     }
 
     /**
