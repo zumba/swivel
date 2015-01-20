@@ -1,7 +1,7 @@
 <?php
 namespace Zumba\Swivel;
 
-interface BucketInterface {
+interface BucketInterface extends \Psr\Log\LoggerAwareInterface {
 
     /**
      * Check if a behavior is enabled for a particular context/bucket combination

@@ -7,13 +7,13 @@ use \Zumba\Swivel\Config,
 class ConfigTest extends \PHPUnit_Framework_TestCase {
     public function testConstructorAddsEmptyMap() {
         $config = new Config();
-        $this->assertEmpty($config->getMap());
+        $this->assertEmpty($config->getFeatures());
     }
 
     public function testConstructorAddsMapParam() {
         $map = ['Feature' => [1,2,3]];
         $config = new Config($map);
-        $this->assertEquals($map, $config->getMap());
+        $this->assertEquals($map, $config->getFeatures());
     }
 
     public function testAddFeature() {
@@ -21,14 +21,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $slug = 'Test';
         $buckets = [1,2];
         $config->addFeature($slug, $buckets);
-        $this->assertEquals($buckets, $config->getMap()[$slug]);
+        $this->assertEquals($buckets, $config->getFeatures()[$slug]);
     }
 
     public function testAddFeatures() {
         $config = new Config();
         $features = [ 'A' => [1,2,3], 'B' => [4,5,6] ];
         $config->addFeatures($features);
-        $this->assertEquals($features, $config->getMap());
+        $this->assertEquals($features, $config->getFeatures());
     }
 
     public function testFeaturesAreCumulative() {
@@ -36,7 +36,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $features = [ 'A' => [1,2,3] ];
         $config->addFeatures($features);
         $config->addFeature('A', [9]);
-        $this->assertEquals([ 'A' => [1,2,3,9] ], $config->getMap());
+        $this->assertEquals([ 'A' => [1,2,3,9] ], $config->getFeatures());
     }
 
     public function testRemoveFeature() {
@@ -44,7 +44,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $features = [ 'A' => [1,2,3], 'B' => [4,5,6] ];
         $config->addFeatures($features);
         $config->removeFeature('B');
-        $this->assertEquals([ 'A' => [1,2,3] ], $config->getMap());
+        $this->assertEquals([ 'A' => [1,2,3] ], $config->getFeatures());
     }
 
     public function testRemoveFeatureBucketOnly() {
@@ -52,7 +52,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $features = [ 'A' => [1,2,3], 'B' => [4,5,6] ];
         $config->addFeatures($features);
         $config->removeFeature('B', [5]);
-        $this->assertEquals([ 'A' => [1,2,3], 'B' => [4,6] ], $config->getMap());
+        $this->assertEquals([ 'A' => [1,2,3], 'B' => [4,6] ], $config->getFeatures());
     }
 
     public function testGetBucket() {
