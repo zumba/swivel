@@ -1,7 +1,7 @@
 <?php
 namespace Zumba\Swivel;
 
-interface ConfigInterface {
+interface ConfigInterface extends \Psr\Log\LoggerAwareInterface {
 
     /**
      * Add a feature to the config.
@@ -32,7 +32,14 @@ interface ConfigInterface {
      *
      * @return array
      */
-    public function getMap();
+    public function getFeatures();
+
+    /**
+     * Get the PSR3 logger
+     *
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger();
 
     /**
      * Remove a slug from the map.

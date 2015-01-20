@@ -1,7 +1,12 @@
 <?php
 namespace Zumba\Swivel;
 
+use \Psr\Log\LoggerInterface,
+    \Psr\Log\NullLogger;
+
 class Config implements ConfigInterface {
+
+    use \Psr\Log\LoggerAwareTrait;
 
     /**
      * Index of the user's bucket
@@ -60,8 +65,9 @@ class Config implements ConfigInterface {
      * @return \Zumba\Swivel\Bucket
      */
     public function getBucket() {
-        $map = new Map($this->getMap());
-        return new Bucket($map, $this->index);
+        $logger = $this->getLogger();
+        $map = new Map($this->getFeatures(), $logger);
+        return new Bucket($map, $this->index, $logger);
     }
 
     /**
@@ -69,8 +75,17 @@ class Config implements ConfigInterface {
      *
      * @return array
      */
-    public function getMap() {
+    public function getFeatures() {
         return $this->map;
+    }
+
+    /**
+     * Get the PSR3 logger
+     *
+     * @return \Psr\Log\LoggerInterface|null
+     */
+    public function getLogger() {
+        return $this->logger ?: new NullLogger();
     }
 
     /**
