@@ -32,7 +32,7 @@ class Map implements MapInterface {
      * Check if a feature slug is enabled for a particular bucket index
      *
      * @param string $slug
-     * @param integer $index bitmask
+     * @param integer $index Bitmask
      * @return boolean
      * @see \Zumba\Swivel\Feature\MapInterface
      */
