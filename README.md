@@ -1,4 +1,7 @@
 # Zumba *Swivel*
+
+[![Build Status](https://travis-ci.org/zumba/swivel.svg?branch=master)](https://travis-ci.org/zumba/swivel)
+
 ***Swivel*** is a fresh spin on an old idea: [Feature Flags](http://en.wikipedia.org/wiki/Feature_toggle) (toggles, bits, switches, etc.).
 
 **Important:** This software is still under initial development.  Not all features are complete, and the API may change.
