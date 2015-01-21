@@ -1,9 +1,6 @@
 <?php
 namespace Zumba\Swivel;
 
-use \Psr\Log\LoggerInterface,
-    \Psr\Log\NullLogger;
-
 class Behavior implements BehaviorInterface {
 
     use \Psr\Log\LoggerAwareTrait;
@@ -29,10 +26,8 @@ class Behavior implements BehaviorInterface {
      *
      * @param string $slug
      * @param callable $strategy
-     * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct($slug, callable $strategy, LoggerInterface $logger = null) {
-        $this->setLogger($logger ?: new NullLogger());
+    public function __construct($slug, callable $strategy) {
         $this->slug = $slug;
         $this->strategy = $strategy;
     }
@@ -46,7 +41,9 @@ class Behavior implements BehaviorInterface {
      */
     public function execute(array $args = []) {
         $slug = $this->slug;
-        $this->logger->debug('Swivel - Executing behavior.', compact('slug', 'args'));
+        if ($this->logger) {
+            $this->logger->debug('Swivel - Executing behavior.', compact('slug', 'args'));
+        }
         return call_user_func_array($this->strategy, $args);
     }
 
