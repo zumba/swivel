@@ -53,6 +53,7 @@ class Bucket implements BucketInterface {
      *
      * @param \Zumba\Swivel\MapInterface $featureMap
      * @param binary|null $index
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(MapInterface $featureMap, $index = null, LoggerInterface $logger = null) {
         $this->setLogger($logger ?: new NullLogger());

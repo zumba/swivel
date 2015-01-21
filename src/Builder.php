@@ -52,6 +52,7 @@ class Builder implements BuilderInterface {
      *
      * @param string $slug
      * @param BucketInterface $bucket
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct($slug, BucketInterface $bucket, LoggerInterface $logger = null) {
         $this->setLogger($logger ?: new NullLogger());

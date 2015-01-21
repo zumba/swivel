@@ -29,6 +29,7 @@ class Behavior implements BehaviorInterface {
      *
      * @param string $slug
      * @param callable $strategy
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct($slug, callable $strategy, LoggerInterface $logger = null) {
         $this->setLogger($logger ?: new NullLogger());
