@@ -1,9 +1,13 @@
 <?php
 namespace Zumba\Swivel\Feature;
 
-use \Zumba\Swivel\Feature;
+use \Zumba\Swivel\Feature,
+    \Psr\Log\LoggerInterface,
+    \Psr\Log\NullLogger;
 
 class Map implements MapInterface {
+
+    use \Psr\Log\LoggerAwareTrait;
 
     /**
      * Map of parsed features
@@ -24,7 +28,8 @@ class Map implements MapInterface {
      *
      * @param array $map
      */
-    public function __construct(array $map = []) {
+    public function __construct(array $map = [], LoggerInterface $logger = null) {
+        $this->setLogger($logger ?: new NullLogger());
         $this->map = $this->parse($map);
     }
 
@@ -42,9 +47,11 @@ class Map implements MapInterface {
         foreach (explode(Feature::DELIMITER, $slug) as $child) {
             $key = empty($key) ? $child : $key . Feature::DELIMITER . $child;
             if (!isset($map[$key]) || !($map[$key] & $index)) {
+                $this->logger->debug('Swivel - "' . $slug . '" is not enabled for bucket ' . $index);
                 return false;
             }
         }
+        $this->logger->debug('Swivel - "' . $slug . '" is enabled for bucket ' . $index);
         return true;
     }
 
@@ -55,6 +62,7 @@ class Map implements MapInterface {
      * @return integer bitmask
      */
     protected function reduceToBitmask(array $list) {
+        $this->logger->debug('Swivel - reducing to bitmask.', compact('list'));
         return array_reduce($list, function($mask, $index) {
             return $mask | (1 << ($index - 1));
         });
@@ -67,6 +75,7 @@ class Map implements MapInterface {
      * @return array
      */
     public function parse(array $map) {
+        $this->logger->info('Swivel - Parsing feature map.', compact('map'));
         return array_combine(array_keys($map), array_map([$this, 'reduceToBitmask'], $map));
     }
 }

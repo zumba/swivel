@@ -1,7 +1,7 @@
 <?php
 namespace Zumba\Swivel\Feature;
 
-interface BuilderInterface {
+interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
 
     /**
      * Register a behavior

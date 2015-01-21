@@ -1,7 +1,13 @@
 <?php
 namespace Zumba\Swivel;
 
+use \Zumba\Swivel\Feature\MapInterface,
+    \Psr\Log\LoggerInterface,
+    \Psr\Log\NullLogger;
+
 class Bucket implements BucketInterface {
+
+    use \Psr\Log\LoggerAwareTrait;
 
     /**
      * Ordnial Bitmasks
@@ -48,7 +54,8 @@ class Bucket implements BucketInterface {
      * @param \Zumba\Swivel\Feature\MapInterface $featureMap
      * @param binary|null $index
      */
-    public function __construct(Feature\MapInterface $featureMap, $index = null) {
+    public function __construct(MapInterface $featureMap, $index = null, LoggerInterface $logger = null) {
+        $this->setLogger($logger ?: new NullLogger());
         $this->featureMap = $featureMap;
         $this->index = $index === null ? $this->randomIndex() : $index;
     }
@@ -71,6 +78,7 @@ class Bucket implements BucketInterface {
      */
     protected function randomIndex() {
         $key = $this->keys[$this->randomNumber()];
+        $this->logger->info('Swivel - Generated random bucket.', compact('key'));
         return constant("static::$key");
     }
 

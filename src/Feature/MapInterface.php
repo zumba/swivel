@@ -1,7 +1,7 @@
 <?php
 namespace Zumba\Swivel\Feature;
 
-interface MapInterface {
+interface MapInterface extends \Psr\Log\LoggerAwareInterface {
 
     /**
      * Check if a feature slug is enabled for a particular bucket index
