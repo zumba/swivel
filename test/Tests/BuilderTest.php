@@ -3,6 +3,7 @@ namespace Tests;
 
 use \Zumba\Swivel\Builder;
 use \Zumba\Swivel\Map;
+use \Psr\Log\NullLogger;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase {
     public function testAddBehavior() {
@@ -39,6 +40,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
             ->with($strategy)
             ->will($this->returnValue($behavior));
 
+        $builder->setLogger(new NullLogger());
         $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->defaultBehavior($strategy));
     }
 
@@ -49,6 +51,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = new Builder('Test', $bucket);
+        $builder->setLogger(new NullLogger());
         $builder->noDefault();
         $builder->defaultBehavior(function() {});
     }
@@ -73,6 +76,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
             ->method('getSlug')
             ->will($this->returnValue(Builder::DEFAULT_SLUG));
 
+        $builder->setLogger(new NullLogger());
         $builder->defaultBehavior($strategy);
         $builder->noDefault();
 
@@ -92,6 +96,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $builder = new Builder('Test', $bucket);
         $strategy = function() {};
 
+        $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());

@@ -33,7 +33,9 @@ class Manager implements ManagerInterface {
      */
     public function forFeature($slug) {
         $this->logger->debug('Swivel - Generating builder for feature "' . $slug . '"');
-        return new Builder($slug, $this->bucket, $this->logger);
+        $builder = new Builder($slug, $this->bucket);
+        $builder->setLogger($this->logger);
+        return $builder;
     }
 
     /**
