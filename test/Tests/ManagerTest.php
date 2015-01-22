@@ -24,7 +24,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testInvokeOneParamEnabled() {
-        $config = $this->getMock('Zumba\Swivel\Config');
+        $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
             ->getMockBuilder('Zumba\Swivel\Builder')
@@ -58,7 +58,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testInvokeOneParamDisabled() {
-        $config = $this->getMock('Zumba\Swivel\Config');
+        $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
             ->getMockBuilder('Zumba\Swivel\Builder')
@@ -91,7 +91,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testInvokeTwoParamEnabled() {
-        $config = $this->getMock('Zumba\Swivel\Config');
+        $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
             ->getMockBuilder('Zumba\Swivel\Builder')
@@ -125,7 +125,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testInvokeTwoParamDisabled() {
-        $config = $this->getMock('Zumba\Swivel\Config');
+        $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
             ->getMockBuilder('Zumba\Swivel\Builder')

@@ -30,7 +30,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     public function testAddBehaviorEnabled() {
         $map = $this->getMock('Zumba\Swivel\Map');
-        $bucket = $this->getMock('Zumba\Swivel\Bucket', [], [$map]);
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior', 'setBehavior'], ['Test', $bucket]);
         $strategy = function() {};
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], ['a', $strategy]);
