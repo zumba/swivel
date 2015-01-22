@@ -1,7 +1,14 @@
 <?php
 namespace Zumba\Swivel;
 
+use \Zumba\Swivel\BucketInterface,
+    \Zumba\Swivel\Behavior,
+    \Psr\Log\LoggerInterface,
+    \Psr\Log\NullLogger;
+
 class Builder implements BuilderInterface {
+
+    use \Psr\Log\LoggerAwareTrait;
 
     const DEFAULT_SLUG = '__swivel_default';
 
@@ -80,7 +87,9 @@ class Builder implements BuilderInterface {
      */
     public function defaultBehavior($strategy, array $args = []) {
         if ($this->defaultWaived) {
-            throw new \LogicException('Defined a default behavior after `noDefault` was called.');
+            $exception = new \LogicException('Defined a default behavior after `noDefault` was called.');
+            $this->logger->critical('Swivel', compact('exception'));
+            throw $exception;
         }
         if (!$this->behavior) {
             $this->setBehavior($this->getBehavior($strategy), $args);
@@ -108,6 +117,7 @@ class Builder implements BuilderInterface {
      * @return \Zumba\Swivel\BehaviorInterface
      */
     public function getBehavior($slug, $strategy = null) {
+        $this->logger->debug('Swivel - Creating new behavior.', compact('slug'));
         if (empty($strategy)) {
             $strategy = $slug;
             $slug = static::DEFAULT_SLUG;
@@ -119,7 +129,7 @@ class Builder implements BuilderInterface {
             };
         }
         $slug = $this->slug . Map::DELIMITER . $slug;
-        return new Behavior($slug, $strategy);
+        return new Behavior($slug, $strategy, $this->logger);
     }
 
     /**
@@ -129,7 +139,9 @@ class Builder implements BuilderInterface {
      */
     public function noDefault() {
         if ($this->behavior && $this->behavior->getSlug() === static::DEFAULT_SLUG) {
-            throw new \LogicException('Called `noDefault` after a default behavior was defined.');
+            $exception = new \LogicException('Called `noDefault` after a default behavior was defined.');
+            $this->logger->critical('Swivel', compact('exception'));
+            throw $exception;
         }
         $this->defaultWaived = true;
         return $this;
@@ -143,6 +155,8 @@ class Builder implements BuilderInterface {
      * @return void
      */
     protected function setBehavior(Behavior $behavior, array $args = []) {
+        $slug = $behavior->getSlug();
+        $this->logger->debug('Swivel - Setting behavior.', compact('slug', 'args'));
         $this->behavior = $behavior;
         $this->args = $args;
     }

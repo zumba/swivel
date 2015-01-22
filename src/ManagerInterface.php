@@ -1,7 +1,7 @@
 <?php
 namespace Zumba\Swivel;
 
-interface ManagerInterface {
+interface ManagerInterface extends \Psr\Log\LoggerAwareInterface {
 
     /**
      * Create a new Builder instance

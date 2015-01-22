@@ -4,6 +4,8 @@ namespace Zumba\Swivel;
 
 class Manager implements ManagerInterface {
 
+    use \Psr\Log\LoggerAwareTrait;
+
     /**
      * A configured Bucket instance.
      *
@@ -17,7 +19,9 @@ class Manager implements ManagerInterface {
      * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config) {
+        $this->setLogger($config->getLogger());
         $this->setBucket($config->getBucket());
+        $this->logger->debug('Swivel - Manager created.');
     }
 
     /**
@@ -28,7 +32,10 @@ class Manager implements ManagerInterface {
      * @see \Zumba\Swivel\ManagerInterface
      */
     public function forFeature($slug) {
-        return new Builder($slug, $this->bucket);
+        $this->logger->debug('Swivel - Generating builder for feature "' . $slug . '"');
+        $builder = new Builder($slug, $this->bucket);
+        $builder->setLogger($this->logger);
+        return $builder;
     }
 
     /**
@@ -41,7 +48,9 @@ class Manager implements ManagerInterface {
      * @see \Zumba\Swivel\ManagerInterface
      */
     public function invoke($slug, $a, $b = null) {
-        throw new \BadMethodCallException('Not Yet Implemented');
+        $exception = new \BadMethodCallException('Invoke Not Yet Implemented');
+        $this->logger->critical('Swivel', compact('exception'));
+        throw $exception;
     }
 
     /**
@@ -54,6 +63,7 @@ class Manager implements ManagerInterface {
     public function setBucket(BucketInterface $bucket = null) {
         if ($bucket) {
             $this->bucket = $bucket;
+            $this->logger->debug('Swivel - User bucket set.', compact('bucket'));
         }
         return $this;
     }

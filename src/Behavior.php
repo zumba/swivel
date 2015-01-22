@@ -3,6 +3,8 @@ namespace Zumba\Swivel;
 
 class Behavior implements BehaviorInterface {
 
+    use \Psr\Log\LoggerAwareTrait;
+
     /**
      * Fully qualified feature slug
      *
@@ -38,6 +40,10 @@ class Behavior implements BehaviorInterface {
      * @see \Zumba\Swivel\BehaviorInterface
      */
     public function execute(array $args = []) {
+        $slug = $this->slug;
+        if ($this->logger) {
+            $this->logger->debug('Swivel - Executing behavior.', compact('slug', 'args'));
+        }
         return call_user_func_array($this->strategy, $args);
     }
 
