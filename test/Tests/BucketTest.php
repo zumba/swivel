@@ -2,12 +2,12 @@
 namespace Tests;
 
 use \Zumba\Swivel\Bucket;
-use \Zumba\Swivel\Feature\Map;
+use \Zumba\Swivel\Map;
 use \Zumba\Swivel\Behavior;
 
 class BucketTest extends \PHPUnit_Framework_TestCase {
     public function testEnabledDelegatesToMap() {
-        $map = $this->getMock('Zumba\Swivel\Feature\Map');
+        $map = $this->getMock('Zumba\Swivel\Map');
         $behavior = $this->getMock('Zumba\Swivel\Behavior', ['getSlug'], ['test', function() {}]);
         $bucket = new Bucket($map, Bucket::FIFTH);
 

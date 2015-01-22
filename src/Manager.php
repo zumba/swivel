@@ -21,14 +21,14 @@ class Manager implements ManagerInterface {
     }
 
     /**
-     * Create a new Feature\Builder instance
+     * Create a new Builder instance
      *
      * @param string $slug
-     * @return \Zumba\Swivel\Feature\Builder
+     * @return \Zumba\Swivel\Builder
      * @see \Zumba\Swivel\ManagerInterface
      */
     public function forFeature($slug) {
-        return new Feature\Builder($slug, $this->bucket);
+        return new Builder($slug, $this->bucket);
     }
 
     /**

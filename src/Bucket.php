@@ -21,7 +21,7 @@ class Bucket implements BucketInterface {
     /**
      * The feature map
      *
-     * @var Zumba\Swivel\Feature\MapInterface
+     * @var Zumba\Swivel\MapInterface
      */
     protected $featureMap;
 
@@ -45,10 +45,10 @@ class Bucket implements BucketInterface {
     /**
      * Zumba\Swivel\Bucket
      *
-     * @param \Zumba\Swivel\Feature\MapInterface $featureMap
+     * @param \Zumba\Swivel\MapInterface $featureMap
      * @param binary|null $index
      */
-    public function __construct(Feature\MapInterface $featureMap, $index = null) {
+    public function __construct(MapInterface $featureMap, $index = null) {
         $this->featureMap = $featureMap;
         $this->index = $index === null ? $this->randomIndex() : $index;
     }

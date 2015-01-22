@@ -1,9 +1,9 @@
 <?php
-namespace Zumba\Swivel\Feature;
-
-use \Zumba\Swivel\Feature;
+namespace Zumba\Swivel;
 
 class Map implements MapInterface {
+
+    const DELIMITER = '.';
 
     /**
      * Map of parsed features
@@ -13,7 +13,7 @@ class Map implements MapInterface {
     protected $map;
 
     /**
-     * Zumba\Swivel\Feature\Map
+     * Zumba\Swivel\Map
      *
      * Example of $map param:
      * [
@@ -34,13 +34,13 @@ class Map implements MapInterface {
      * @param string $slug
      * @param integer $index Bitmask
      * @return boolean
-     * @see \Zumba\Swivel\Feature\MapInterface
+     * @see \Zumba\Swivel\MapInterface
      */
     public function enabled($slug, $index) {
         $map = $this->map;
         $key = '';
-        foreach (explode(Feature::DELIMITER, $slug) as $child) {
-            $key = empty($key) ? $child : $key . Feature::DELIMITER . $child;
+        foreach (explode(static::DELIMITER, $slug) as $child) {
+            $key = empty($key) ? $child : $key . static::DELIMITER . $child;
             if (!isset($map[$key]) || !($map[$key] & $index)) {
                 return false;
             }

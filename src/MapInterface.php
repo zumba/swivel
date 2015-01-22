@@ -1,5 +1,5 @@
 <?php
-namespace Zumba\Swivel\Feature;
+namespace Zumba\Swivel;
 
 interface MapInterface {
 

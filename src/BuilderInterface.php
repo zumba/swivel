@@ -1,5 +1,5 @@
 <?php
-namespace Zumba\Swivel\Feature;
+namespace Zumba\Swivel;
 
 interface BuilderInterface {
 
@@ -13,7 +13,7 @@ interface BuilderInterface {
      * @param string $slug
      * @param mixed $strategy
      * @param array $args
-     * @return \Zumba\Swivel\Feature\BuilderInterface
+     * @return \Zumba\Swivel\BuilderInterface
      */
     public function addBehavior($slug, $strategy, array $args = []);
 
@@ -36,16 +36,9 @@ interface BuilderInterface {
     public function getBehavior($slug, $strategy = null);
 
     /**
-     * Creates a new Feature object with an attached Behavior.
-     *
-     * @return \Zumba\Swivel\Feature
-     */
-    public function getFeature();
-
-    /**
      * Indicates that the feature has no default behavior.
      *
-     * @return \Zumba\Swivel\Feature\BuilderInterface
+     * @return \Zumba\Swivel\BuilderInterface
      */
     public function noDefault();
 
