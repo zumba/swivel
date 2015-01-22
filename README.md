@@ -1,6 +1,7 @@
 # Zumba *Swivel*
 
 [![Build Status](https://travis-ci.org/zumba/swivel.svg?branch=master)](https://travis-ci.org/zumba/swivel)
+[![Coverage Status](https://coveralls.io/repos/zumba/swivel/badge.svg)](https://coveralls.io/r/zumba/swivel)
 
 ***Swivel*** is a fresh spin on an old idea: [Feature Flags](http://en.wikipedia.org/wiki/Feature_toggle) (toggles, bits, switches, etc.).
 
@@ -47,4 +48,41 @@ $formula = $swivel->forFeature('AwesomeSauce')
     ->execute();
 ```
 
-***Swivel*** knows that the current user is in Bucket 6.  You have enabled the new Saucy formula for all users in Bucket 6, so ***Swivel*** executes `$this->getNewSaucyFormula()` and returns the result.
+# Getting Started
+
+The first thing you'll want to do is generate a random number between 1 and 10 for each user in your application. This will be the user's "bucket."
+
+**Note:** As a best practice, once a user is assigned to a bucket they should remain in that bucket forever. You'll want to store this value in a session or cookie like you would other basic user info.
+
+Next, you'll need to create a map of features to buckets that should have each feature enabled.  Here is an example of a simple feature map:
+
+```php
+$map = [
+    // This is a parent feature slug.
+    // It is enabled for users in buckets 4, 5, and 6
+    'Feature' => [4,5,6],
+
+    // This is a behavior slug.  It is a subset of the parent slug,
+    // and it is only enabled for users in buckets 4 and 5
+    'Feature.Test' => [4, 5],
+
+    // Behavior slugs can be infinitely nested.
+    // This one is only enabled for users in bucket 5.
+    'Feature.Test.VersionA' => [5]
+];
+```
+
+When your application is bootstrapping, configure ***Swivel*** and create a new manager instance:
+
+```php
+// Get this value from the session or persistent storage.
+$userBucket = 5; // $_SESSION['bucket'];
+
+// get the map from the DB
+$featureMap = [ 'Feature' => [4,5,6], 'Feature.Test' => [4,5] ];
+
+$config = new \Zumba\Swivel\Config($featureMap, $userBucket);
+$swivel = new \Zumba\Swivel\Manager($config);
+```
+
+Way to go!  ***Swivel*** is now ready to use.
