@@ -1,8 +1,7 @@
 <?php
-namespace Tests\Feature;
+namespace Tests;
 
-use \Zumba\Swivel\Feature\Map;
-use \Zumba\Swivel\Feature;
+use \Zumba\Swivel\Map;
 use \Zumba\Swivel\Bucket;
 
 class MapTest extends \PHPUnit_Framework_TestCase {

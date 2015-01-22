@@ -60,7 +60,7 @@ class Config implements ConfigInterface {
      * @return \Zumba\Swivel\Bucket
      */
     public function getBucket() {
-        $map = new Feature\Map($this->getMap());
+        $map = new Map($this->getMap());
         return new Bucket($map, $this->index);
     }
 

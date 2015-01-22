@@ -1,8 +1,5 @@
 <?php
-namespace Zumba\Swivel\Feature;
-
-use Zumba\Swivel\BucketInterface,
-    Zumba\Swivel\Behavior;
+namespace Zumba\Swivel;
 
 class Builder implements BuilderInterface {
 
@@ -44,7 +41,7 @@ class Builder implements BuilderInterface {
     protected $slug;
 
     /**
-     * Zumba\Swivel\Feature\Builder
+     * Zumba\Swivel\Builder
      *
      * @param string $slug
      * @param BucketInterface $bucket
@@ -62,7 +59,7 @@ class Builder implements BuilderInterface {
      * @param string $slug
      * @param mixed $strategy
      * @param array $args
-     * @return \Zumba\Swivel\Feature\BuilderInterface
+     * @return \Zumba\Swivel\BuilderInterface
      */
     public function addBehavior($slug, $strategy, array $args = []) {
         $behavior = $this->getBehavior($slug, $strategy);
@@ -79,7 +76,7 @@ class Builder implements BuilderInterface {
      *
      * @param mixed $strategy
      * @param array $args
-     * @return \Zumba\Swivel\Feature\BuilderInterface
+     * @return \Zumba\Swivel\BuilderInterface
      */
     public function defaultBehavior($strategy, array $args = []) {
         if ($this->defaultWaived) {
@@ -97,7 +94,8 @@ class Builder implements BuilderInterface {
      * @return mixed
      */
     public function execute() {
-        return $this->getFeature()->execute();
+        $behavior = $this->behavior ?: $this->getBehavior(null);
+        return $behavior->execute($this->args ?: []);
     }
 
     /**
@@ -112,7 +110,7 @@ class Builder implements BuilderInterface {
     public function getBehavior($slug, $strategy = null) {
         if (empty($strategy)) {
             $strategy = $slug;
-            $slug = Behavior::DEFAULT_SLUG;
+            $slug = static::DEFAULT_SLUG;
         }
 
         if (!is_callable($strategy)) {
@@ -120,24 +118,14 @@ class Builder implements BuilderInterface {
                 return $strategy;
             };
         }
-        $slug = $this->slug . \Zumba\Swivel\Feature::DELIMITER . $slug;
+        $slug = $this->slug . Map::DELIMITER . $slug;
         return new Behavior($slug, $strategy);
-    }
-
-    /**
-     * Create and return a new Feature with an attached behavior
-     *
-     * @return \Zumba\Swivel\FeatureInterface
-     */
-    public function getFeature() {
-        $feature = new \Zumba\Swivel\Feature();
-        return $feature->attach($this->behavior ?: function() {}, $this->args);
     }
 
     /**
      * Waive the default behavior for this feature.
      *
-     * @return \Zumba\Swivel\Feature\BuilderInterface
+     * @return \Zumba\Swivel\BuilderInterface
      */
     public function noDefault() {
         if ($this->behavior && $this->behavior->getSlug() === static::DEFAULT_SLUG) {
@@ -150,7 +138,7 @@ class Builder implements BuilderInterface {
     /**
      * Set the behavior and it's args
      *
-     * @param \Zumba\Feature\Behavior $behavior
+     * @param \Zumba\Swivel\Behavior $behavior
      * @param array $args
      * @return void
      */

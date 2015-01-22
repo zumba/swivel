@@ -4,10 +4,10 @@ namespace Zumba\Swivel;
 interface ManagerInterface {
 
     /**
-     * Create a new Feature\Builder instance
+     * Create a new Builder instance
      *
      * @param string $slug
-     * @return \Zumba\Swivel\Feature\Builder
+     * @return \Zumba\Swivel\Builder
      */
     public function forFeature($slug);
 
