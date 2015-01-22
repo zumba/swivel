@@ -2,7 +2,8 @@
 namespace Tests;
 
 use \Zumba\Swivel\Config,
-    \Zumba\Swivel\Bucket;
+    \Zumba\Swivel\Bucket,
+    \Zumba\Swivel\MapInterface;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase {
 
@@ -22,5 +23,31 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
 
         $config->setBucket(5);
         $this->assertEquals(5, $index->getValue($config));
+    }
+
+    public function testAddMapInterface() {
+        $map = $this->getMock('Zumba\Swivel\MapInterface');
+        $map->expects($this->once())->method('setLogger');
+        $config = new Config($map);
+    }
+
+    public function testAddDriverInterface() {
+        $driver = $this->getMock('Zumba\Swivel\DriverInterface');
+        $map = $this->getMock('Zumba\Swivel\MapInterface');
+
+        $driver
+            ->expects($this->once())
+            ->method('getMap')
+            ->will($this->returnValue($map));
+
+        $map->expects($this->once())->method('setLogger');
+        $config = new Config($driver);
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testUnknownObject() {
+        $config = new Config(new \stdClass());
     }
 }
