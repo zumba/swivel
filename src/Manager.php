@@ -48,9 +48,12 @@ class Manager implements ManagerInterface {
      * @see \Zumba\Swivel\ManagerInterface
      */
     public function invoke($slug, $a, $b = null) {
-        $exception = new \BadMethodCallException('Invoke Not Yet Implemented');
-        $this->logger->critical('Swivel', compact('exception'));
-        throw $exception;
+        $parts = explode(Map::DELIMITER, $slug);
+        $feature = array_shift($parts);
+        return $this->forFeature($feature)
+            ->addBehavior(implode(Map::DELIMITER, $parts), $a)
+            ->defaultBehavior($b)
+            ->execute();
     }
 
     /**

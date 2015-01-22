@@ -42,56 +42,56 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     public function enabledProvider() {
         return [
             [
-                'assertTrue', 'Test.version.a', Bucket::FIRST, [
+                'assertTrue', 'Test.version.a', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
                     'Test.version.a' => [1]
                 ]
             ],
             [
-                'assertTrue', 'Test.version', Bucket::FIRST, [
+                'assertTrue', 'Test.version', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
                     'Test.version.a' => [1]
                 ]
             ],
             [
-                'assertTrue', 'Test', Bucket::FIRST, [
+                'assertTrue', 'Test', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
                     'Test.version.a' => [1]
                 ]
             ],
             [
-                'assertTrue', 'Test.version', Bucket::FIRST, [
+                'assertTrue', 'Test.version', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
                     'Test.version.a' => []
                 ]
             ],
             [
-                'assertFalse', 'Test.version.a', Bucket::FIRST, [
+                'assertFalse', 'Test.version.a', 1, [
                     'Test' => [],
                     'Test.version' => [1],
                     'Test.version.a' => [1]
                 ]
             ],
             [
-                'assertFalse', 'Test.version.a', Bucket::FIRST, [
+                'assertFalse', 'Test.version.a', 1, [
                     'Test' => [1],
                     'Test.version' => [],
                     'Test.version.a' => [1]
                 ]
             ],
             [
-                'assertFalse', 'Test.version.b', Bucket::FIRST, [
+                'assertFalse', 'Test.version.b', 1, [
                     'Test' => [],
                     'Test.version' => [],
                     'Test.version.a' => []
                 ]
             ],
             [
-                'assertTrue', 'Test.version.a', Bucket::THIRD, [
+                'assertTrue', 'Test.version.a', 3, [
                     'Test' => [2, 3, 5],
                     'Test.version' => [2, 3],
                     'Test.version.a' => [3]

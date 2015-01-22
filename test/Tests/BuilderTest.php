@@ -6,7 +6,7 @@ use \Zumba\Swivel\Map;
 use \Psr\Log\NullLogger;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase {
-    public function testAddBehavior() {
+    public function testAddBehaviorNotEnabled() {
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior'], ['Test', $bucket]);
@@ -22,7 +22,35 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $bucket
             ->expects($this->once())
             ->method('enabled')
-            ->with($behavior);
+            ->with($behavior)
+            ->will($this->returnValue(false));
+
+        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addBehavior('a', $strategy));
+    }
+
+    public function testAddBehaviorEnabled() {
+        $map = $this->getMock('Zumba\Swivel\Map');
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
+        $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior', 'setBehavior'], ['Test', $bucket]);
+        $strategy = function() {};
+        $behavior = $this->getMock('Zumba\Swivel\Behavior', [], ['a', $strategy]);
+
+        $builder
+            ->expects($this->once())
+            ->method('getBehavior')
+            ->with('a', $strategy)
+            ->will($this->returnValue($behavior));
+
+        $builder
+            ->expects($this->once())
+            ->method('setBehavior')
+            ->with($behavior, []);
+
+        $bucket
+            ->expects($this->once())
+            ->method('enabled')
+            ->with($behavior)
+            ->will($this->returnValue(true));
 
         $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addBehavior('a', $strategy));
     }

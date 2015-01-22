@@ -39,13 +39,14 @@ class Map implements MapInterface {
      * Check if a feature slug is enabled for a particular bucket index
      *
      * @param string $slug
-     * @param integer $index Bitmask
+     * @param integer $index
      * @return boolean
      * @see \Zumba\Swivel\MapInterface
      */
     public function enabled($slug, $index) {
         $map = $this->map;
         $key = '';
+        $index = 1 << ($index - 1);
         foreach (explode(static::DELIMITER, $slug) as $child) {
             $key = empty($key) ? $child : $key . static::DELIMITER . $child;
             if (!isset($map[$key]) || !($map[$key] & $index)) {
