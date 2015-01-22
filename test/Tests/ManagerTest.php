@@ -8,7 +8,7 @@ use \Zumba\Swivel\Config;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase {
     public function testForFeature() {
-        $manager = new Manager($this->getMock('Zumba\Swivel\Config'));
+        $manager = new Manager(new Config());
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
 
@@ -17,7 +17,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testSetBucketReturnsManager() {
-        $manager = new Manager($this->getMock('Zumba\Swivel\Config'));
+        $manager = new Manager(new Config());
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $this->assertInstanceOf('Zumba\Swivel\Manager', $manager->setBucket($bucket));

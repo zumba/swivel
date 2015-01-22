@@ -86,6 +86,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', null, ['Test', $bucket]);
+        $builder->setLogger(new NullLogger());
         $builder->defaultBehavior('abc');
         $this->assertSame('abc', $builder->execute());
     }
