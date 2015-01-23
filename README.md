@@ -143,6 +143,23 @@ Param                         | Type       | Details
 **$index**<br/>*(optional)*  | *integer* | The user's predefined bucket index.  A number between 1 and 10.
 **$logger**<br/>*(optional)* | `LoggerInterface` | An optional logger that implements `\Psr\Log\LoggerInterface`
 
+##### Examples
+
+```php
+$features = [ 'Feature' => [1,2,3] ];
+$bucket = 3;
+
+// array
+$config = new \Zumba\Swivel\Config($features, $bucket);
+
+// \Zumba\Swivel\Map
+$config = new \Zumba\Swivel\Config(new \Zumba\Swivel\Map($features), $bucket);
+
+ // $driver implements \Zumba\Swivel\DriverInterface
+$config = new \Zumba\Swivel\Config($driver, $bucket);
+
+```
+
 ### Zumba\Swivel\Manager
 
 #### constructor($config)
@@ -153,6 +170,13 @@ Param       | Type     | Details
 :-----------|:---------|:--------
 **$config** | `Config` | A `\Zumba\Swivel\Config` instance.
 
+##### Examples
+
+```php
+$config = new \Zumba\Swivel\Config($features, $bucket);
+$swivel = new \Zumba\Swivel\Manager($config);
+```
+
 #### forFeature($slug)
 
 Create a point of deviation in your code.  Returns a new `Zumba\Swivel\Builder` that accepts multiple behaviors, default behaviors, and executes the appropriate code for the user's bucket.
@@ -161,23 +185,32 @@ Param     | Type     | Details
 :---------|:---------|:--------
 **$slug** | *string* | The first section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` would be `"Test"`
 
-#### invoke($slug, $a, $b)
-
-Shorthand syntactic sugar for invoking a simple feature behavior.  Useful for ternary style code:
+##### Examples
 
 ```php
-// traditional
-$result $newSearch ? $this->search() : $this->noOp();
-
-// Zumba\Swivel\Manager::invoke
-$result = $swivel->invoke('Search.New', [$this, 'search'], [$this, 'noOp']);
+$builder = $swivel->forFeature('Test');
 ```
+
+#### invoke($slug, $a, $b)
+
+Shorthand syntactic sugar for invoking a simple feature behavior.  Useful for ternary style code.
 
 Param                   | Type       | Details
 :-----------------------|:-----------|:--------
 **$slug**               | *string*   | The first section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` would be `"Test"`
 **$a**                  | *callable* | The strategy to execute if the `$slug` is enabled for the user's bucket.
 **$b**<br/>*(optional)* | *callable* | The strategy to execute if the `$slug` is not enabled for the user's bucket.  If omitted, `invoke` will return `null` if the feature slug is not enabled.
+
+##### Examples
+
+```php
+// without Swivel
+$result = $newSearch ? $this->search() : $this->noOp();
+
+// Zumba\Swivel\Manager::invoke
+$result = $swivel->invoke('Search.New', [$this, 'search'], [$this, 'noOp']);
+$result = $swivel->invoke('Search.New', [$this, 'search']);
+```
 
 ### Zumba\Swivel\Builder
 
@@ -187,25 +220,85 @@ The `Builder` API is the primary way that you will write ***Swivel*** code.  You
 
 Lazily adds a behavior to this feature that will only be executed if the feature is enabled for the user's bucket.
 
-Param                      | Type       | Details
-:--------------------------|:-----------|:--------
-**$slug**                  | *string*   | The second section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` here would be `"Version.Two"`
-**$strategy**              | *callable* | The strategy to execute if the `$slug` is enabled for the user's bucket.
-**$args**<br/>*(optional)* | *array*    | Parameters to pass to the `$strategy` callable if it is executed.
+Param                      | Type     | Details
+:--------------------------|:---------|:--------
+**$slug**                  | *string* | The second section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` here would be `"Version.Two"`
+**$strategy**              | *mixed*  | The strategy to execute if the `$slug` is enabled for the user's bucket. If `$strategy` is not a callable it will be wrapped in an anonymous function for you and treated as the evaluated result.
+**$args**<br/>*(optional)* | *array*  | Parameters to pass to the `$strategy` callable if it is executed.
+
+##### Examples
+
+```php
+$builder = $swivel->forFeature('Test');
+
+$builder
+    // Inline function.  This one will return 'ab'
+    ->addBehavior('versionA', function($a, $b) { return $a . $b; }, ['a', 'b'])
+
+    // Callable.  Will return the result of $obj->someMethod('c', 'd');
+    ->addBehavior('versionB', [$obj, 'someMethod'], ['c', 'd'])
+
+     // Literal. Will return 'result' if executed
+    ->addBehavior('versionC', 'result');
+```
 
 #### defaultBehavior($strategy, $args)
 
 Lazily adds a behavior to this feature that will only be executed if no other feature behaviors are enabled for the user's bucket.
 
-Param                      | Type       | Details
-:--------------------------|:-----------|:--------
-**$strategy**              | *callable* | The strategy to execute if no other feature behaviors are enabled for the user's bucket.
-**$args**<br/>*(optional)* | *array*    | Parameters to pass to the `$strategy` callable if it is executed.
+Param                      | Type    | Details
+:--------------------------|:--------|:--------
+**$strategy**              | *mixed* | The strategy to execute if no other feature behaviors are enabled for the user's bucket. If `$strategy` is not a callable it will be wrapped in an anonymous function for you and treated as the evaluated result.
+**$args**<br/>*(optional)* | *array* | Parameters to pass to the `$strategy` callable if it is executed.
+
+##### Examples
+
+```php
+$swivel
+    ->forFeature('Test');
+    ->addBehavior('New.Version', [$this, 'someMethod'], $args)
+    ->defaultBehavior([$this, 'defaultMethod'], $args);
+```
 
 #### execute()
 
 Executes the appropriate behavior strategy based on the user's bucket.
 
+##### Examples
+
+```php
+// $result will contain either the result of
+// $this->someMethod(1, 2, 3) or $this->defaultMethod('test')
+// depending on the user's bucket
+$result = $swivel
+    ->forFeature('Test');
+    ->addBehavior('New.Version', [$this, 'someMethod'], [1, 2, 3])
+    ->defaultBehavior([$this, 'defaultMethod'], ['test'])
+    ->execute();
+```
+
 #### noDefault()
 
 If you do not need to define a default behavior to be executed when a feature is not enabled for a user's bucket, call `noDefault` on the `Builder`.  ***Swivel*** will throw a `\LogicException` if you neglect to define a default behavior and do not call `noDefault`.  Likewise, ***Swivel*** will throw a `\LogicException` if you call both `noDefault` and `defaultBehavior` on the same `Builder` instance.
+
+##### Examples
+
+```php
+$swivel
+    ->forFeature('Test');
+    ->addBehavior('A', [$obj, 'someMethod'])
+    ->execute(); // throws \LogicException here.
+
+$swivel
+    ->forFeature('Test');
+    ->addBehavior('A', [$obj, 'someMethod'])
+    ->noDefault()
+    ->execute(); // no exception thrown.
+
+$swivel
+    ->forFeature('Test');
+    ->addBehavior('A', [$obj, 'someMethod'])
+    ->defaultBehavior([$obj, 'anotherMethod'])
+    ->noDefault() // throws \LogicException here.
+    ->execute();
+```
