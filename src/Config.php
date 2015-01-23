@@ -18,45 +18,21 @@ class Config implements ConfigInterface {
     /**
      * Map of features
      *
-     * @var array
+     * @var \Zumba\Swivel\Map
      */
     protected $map;
 
     /**
      * Zumba\Swivel\Config
      *
-     * @param array $initialMap
+     * @param mixed $map
      * @param integer|null $index
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(array $initialMap = [], $index = null) {
-        $this->map = $initialMap;
+    public function __construct($map = [], $index = null, LoggerInterface $logger = null) {
+        $this->setLogger($logger ?: $this->getLogger());
+        $this->setMap($map);
         $this->index = $index;
-    }
-
-    /**
-     * Add a feature to the config.
-     *
-     * @param string $slug
-     * @param array $buckets
-     * @return void
-     */
-    public function addFeature($slug, array $buckets) {
-        if (empty($this->map[$slug])) {
-            $this->map[$slug] = [];
-        }
-        $this->map[$slug] = array_merge($this->map[$slug], $buckets);
-    }
-
-    /**
-     * Add an array of features to the config.
-     *
-     * @param array $map Example: [ "A" => [1,2,3], "B" => [4,5,6] ]
-     * @return void
-     */
-    public function addFeatures(array $map) {
-        foreach ($map as $slug => $buckets) {
-            $this->addFeature($slug, $buckets);
-        }
     }
 
     /**
@@ -65,18 +41,7 @@ class Config implements ConfigInterface {
      * @return \Zumba\Swivel\Bucket
      */
     public function getBucket() {
-        $logger = $this->getLogger();
-        $map = new Map($this->getFeatures(), $logger);
-        return new Bucket($map, $this->index, $logger);
-    }
-
-    /**
-     * Get the configured feature map.
-     *
-     * @return array
-     */
-    public function getFeatures() {
-        return $this->map;
+        return new Bucket($this->map, $this->index, $this->getLogger());
     }
 
     /**
@@ -89,30 +54,33 @@ class Config implements ConfigInterface {
     }
 
     /**
-     * Remove a slug from the map.
-     *
-     * If $buckets is provided, will only remove the indicated buckets from the feature, not the
-     * entire slug.
-     *
-     * @param string $slug
-     * @param array $buckets
-     * @return void
-     */
-    public function removeFeature($slug, array $buckets = []) {
-        if (empty($buckets)) {
-            unset($this->map[$slug]);
-        } else if (isset($this->map[$slug])) {
-            $this->map[$slug] = array_values(array_diff($this->map[$slug], $buckets));
-        }
-    }
-
-    /**
      * Set the bucket index for the user
      *
      * @param integer $index
      * @return void
      */
-    public function setBucket($index) {
+    public function setBucketIndex($index) {
         $this->index = $index;
+    }
+
+    /**
+     * Set the Zumba\Swivel\Map object
+     *
+     * @param mixed $map
+     * @return void
+     */
+    protected function setMap($map) {
+        $logger = $this->getLogger();
+        if (is_array($map)) {
+            $map = new Map($map, $logger);
+        } elseif ($map instanceof DriverInterface) {
+            $map = $map->getMap();
+            $map->setLogger($logger);
+        } elseif ($map instanceof MapInterface) {
+            $map->setLogger($logger);
+        } else {
+            throw new \LogicException('Invalid map passed to Zumba\Swivel\Config');
+        }
+        $this->map = $map;
     }
 }
