@@ -52,7 +52,7 @@ class Map implements MapInterface {
             return $data;
         };
 
-        $maps = array_slice((func_get_args()), 1);
+        $maps = array_slice(func_get_args(), 1);
         $data = array_reduce($maps, $combine, $combine($this->map, $map->getMapData()));
         return new Map($data, $this->logger);
     }
@@ -133,7 +133,7 @@ class Map implements MapInterface {
      * @return MapInterface
      */
     public function merge(MapInterface $map) {
-        $maps = array_slice((func_get_args()), 1);
+        $maps = array_slice(func_get_args(), 1);
         $data = array_reduce($maps, 'array_merge', array_merge($this->map, $map->getMapData()));
         return new Map($data, $this->logger);
     }
