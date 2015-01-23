@@ -10,7 +10,7 @@ class Bucket implements BucketInterface {
     use \Psr\Log\LoggerAwareTrait;
 
     /**
-     * Ordnial Bitmasks
+     * Ordinal Bitmasks
      */
     const FIRST   = 0b0000000001;
     const SECOND  = 0b0000000010;
