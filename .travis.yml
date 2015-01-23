@@ -12,3 +12,6 @@ before_script:
 script:
   - ./vendor/bin/phpunit --coverage-text
   - ./vendor/bin/phpcs --standard=phpcs.xml src
+
+after_script:
+  - php vendor/bin/coveralls -v
