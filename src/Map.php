@@ -36,6 +36,49 @@ class Map implements MapInterface {
     }
 
     /**
+     * Merge this map with another map and return a new MapInterface
+     *
+     * Values in $map will be added to values in this instance.  Any number of additional maps may
+     * be passed to this method, i.e. $map->merge($map2, $map3, $map4, ...);
+     *
+     * @param MapInterface $map
+     * @return MapInterface
+     */
+    public function add(MapInterface $map) {
+        $combine = function($data, $map) {
+            foreach ($map as $key => $mask) {
+                $data[$key] = empty($data[$key]) ? $mask : ($data[$key] | $mask);
+            }
+            return $data;
+        };
+
+        $maps = array_slice((func_get_args()), 1);
+        $data = array_reduce($maps, $combine, $combine($this->map, $map->getMapData()));
+        return new Map($data, $this->logger);
+    }
+
+    /**
+     * Compare $map to this instance and return a new MapInterface.
+     *
+     * Returned object will contain only the elements that differ between the two maps. If a feature
+     * with the same key has different buckets, the buckets from the passed-in $map will be in the
+     * new object.
+     *
+     * If this map has a logger, it will be passed to the new map.
+     *
+     * @param MapInterface $map
+     * @return MapInterface
+     */
+    public function diff(MapInterface $map) {
+        $otherMapData = $map->getMapData();
+        $data = array_merge(
+            array_diff_assoc($this->map, $otherMapData),
+            array_diff_assoc($otherMapData, $this->map)
+        );
+        return new Map($data);
+    }
+
+    /**
      * Check if a feature slug is enabled for a particular bucket index
      *
      * @param string $slug
@@ -59,14 +102,53 @@ class Map implements MapInterface {
     }
 
     /**
-     * Reduce an array of integers to a bitmask
+     * Get the internal map array used by this map object.
      *
-     * @param array $list
+     * @return array
+     */
+    public function getMapData() {
+        return $this->map;
+    }
+
+    /**
+     * Compare $map to this instance and return a new MapInterface.
+     *
+     * Returned object will contain only the elements that match between the two maps. If this map
+     * has a logger, it will be passed to the new map.
+     *
+     * @param MapInterface $map
+     * @return MapInterface
+     */
+    public function intersect(MapInterface $map) {
+        return new Map(array_intersect_assoc($this->map, $map->getMapData()), $this->logger);
+    }
+
+    /**
+     * Merge this map with another map and return a new MapInterface
+     *
+     * Values in $map will overwrite values in this instance.  Any number of additional maps may
+     * be passed to this method, i.e. $map->merge($map2, $map3, $map4, ...);
+     *
+     * @param MapInterface $map
+     * @return MapInterface
+     */
+    public function merge(MapInterface $map) {
+        $maps = array_slice((func_get_args()), 1);
+        $data = array_reduce($maps, 'array_merge', array_merge($this->map, $map->getMapData()));
+        return new Map($data, $this->logger);
+    }
+
+    /**
+     * Reduce an array of integers to a bitmask if $list is an array.
+     *
+     * Otherwise, this method will just return $list.
+     *
+     * @param mixed $list
      * @return integer bitmask
      */
-    protected function reduceToBitmask(array $list) {
+    protected function reduceToBitmask($list) {
         $this->logger->debug('Swivel - reducing to bitmask.', compact('list'));
-        return array_reduce($list, function($mask, $index) {
+        return !is_array($list) ? $list : array_reduce($list, function($mask, $index) {
             return $mask | (1 << ($index - 1));
         });
     }
