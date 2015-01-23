@@ -23,5 +23,5 @@ interface ConfigInterface extends \Psr\Log\LoggerAwareInterface {
      * @param integer $index
      * @return void
      */
-    public function setBucket($index);
+    public function setBucketIndex($index);
 }

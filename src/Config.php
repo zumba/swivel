@@ -59,7 +59,7 @@ class Config implements ConfigInterface {
      * @param integer $index
      * @return void
      */
-    public function setBucket($index) {
+    public function setBucketIndex($index) {
         $this->index = $index;
     }
 

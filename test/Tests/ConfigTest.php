@@ -14,14 +14,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zumba\Swivel\Bucket', $bucket);
     }
 
-    public function testSetBucket() {
+    public function testSetBucketIndex() {
         $config = new Config();
         $image = new \ReflectionClass($config);
         $index = $image->getProperty('index');
         $index->setAccessible(true);
         $this->assertNull($index->getValue($config));
 
-        $config->setBucket(5);
+        $config->setBucketIndex(5);
         $this->assertEquals(5, $index->getValue($config));
     }
 
