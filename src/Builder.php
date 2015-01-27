@@ -40,6 +40,24 @@ class Builder implements BuilderInterface {
      */
     protected $defaultWaived;
 
+
+    /**
+     * Keys used in metrics
+     *
+     * @var array
+     */
+    private $keys = [
+        'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH',
+        'SIXTH', 'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH'
+    ];
+
+    /**
+     * A Metrics object.
+     *
+     * @var \Zumba\Swivel\MetricsInterface
+     */
+    protected $metrics;
+
     /**
      * Parent Feature slug
      *
@@ -104,7 +122,13 @@ class Builder implements BuilderInterface {
      */
     public function execute() {
         $behavior = $this->behavior ?: $this->getBehavior(null);
-        return $behavior->execute($this->args ?: []);
+        $behaviorSlug = $behavior->getSlug();
+
+        $this->startMetrics($behaviorSlug);
+        $result = $behavior->execute($this->args ?: []);
+        $this->stopMetrics($behaviorSlug);
+
+        return $result;
     }
 
     /**
@@ -159,5 +183,46 @@ class Builder implements BuilderInterface {
         $this->logger->debug('Swivel - Setting behavior.', compact('slug', 'args'));
         $this->behavior = $behavior;
         $this->args = $args;
+    }
+
+    /**
+     * Set a metrics object
+     *
+     * @param \Zumba\Swivel\MetricsInterface $metrics
+     * @return void
+     */
+    public function setMetrics(MetricsInterface $metrics) {
+        $this->metrics = $metrics;
+    }
+
+    /**
+     * Start collecting metrics about this feature
+     *
+     * @param string $behaviorSlug
+     * @return void
+     */
+    protected function startMetrics($behaviorSlug) {
+        $metrics = $this->metrics;
+        $bucketIndex = $this->bucket->getIndex();
+
+        // Increment counters
+        $metrics->increment('Features', $behaviorSlug);
+        $metrics->increment('Buckets', $this->keys[$bucketIndex - 1], $behaviorSlug);
+
+        // Start timers
+        $metrics->startTiming('Features', $behaviorSlug);
+        $metrics->startMemoryProfile('Features', $behaviorSlug);
+    }
+
+    /**
+     * Stop collecting metrics about this feature
+     *
+     * @param string $behaviorSlug
+     * @return void
+     */
+    protected function stopMetrics($behaviorSlug) {
+        $metrics = $this->metrics;
+        $metrics->endMemoryProfile('Features', $behaviorSlug);
+        $metrics->endTiming('Features', $behaviorSlug);
     }
 }

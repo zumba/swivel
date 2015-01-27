@@ -14,6 +14,13 @@ class Manager implements ManagerInterface {
     protected $bucket;
 
     /**
+     * A metrics object
+     *
+     * @var \Zumba\Swivel\MetricsInterface
+     */
+    protected $metrics;
+
+    /**
      * Zumba\Swivel\Manager
      *
      * @param ConfigInterface $config
@@ -21,6 +28,7 @@ class Manager implements ManagerInterface {
     public function __construct(ConfigInterface $config) {
         $this->setLogger($config->getLogger());
         $this->setBucket($config->getBucket());
+        $this->setMetrics($config->getMetrics());
         $this->logger->debug('Swivel - Manager created.');
     }
 
@@ -35,6 +43,7 @@ class Manager implements ManagerInterface {
         $this->logger->debug('Swivel - Generating builder for feature "' . $slug . '"');
         $builder = new Builder($slug, $this->bucket);
         $builder->setLogger($this->logger);
+        $builder->setMetrics($this->metrics);
         return $builder;
     }
 
@@ -69,5 +78,15 @@ class Manager implements ManagerInterface {
             $this->logger->debug('Swivel - User bucket set.', compact('bucket'));
         }
         return $this;
+    }
+
+    /**
+     * Set a metrics object
+     *
+     * @param MetricsInterface $metrics
+     * @return void
+     */
+    protected function setMetrics(MetricsInterface $metrics) {
+        $this->metrics = $metrics;
     }
 }

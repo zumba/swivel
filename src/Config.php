@@ -23,6 +23,13 @@ class Config implements ConfigInterface {
     protected $map;
 
     /**
+     * Metrics object
+     *
+     * @var \Zumba\Swivel\MetricsInterface
+     */
+    protected $metrics;
+
+    /**
      * Zumba\Swivel\Config
      *
      * @param mixed $map
@@ -54,6 +61,15 @@ class Config implements ConfigInterface {
     }
 
     /**
+     * Get the Metrics object
+     *
+     * @return \Zumba\Swivel\MetricsInterface
+     */
+    public function getMetrics() {
+        return $this->metrics ?: new Metrics\NullReporter();
+    }
+
+    /**
      * Set the bucket index for the user
      *
      * @param integer $index
@@ -82,5 +98,15 @@ class Config implements ConfigInterface {
             throw new \LogicException('Invalid map passed to Zumba\Swivel\Config');
         }
         $this->map = $map;
+    }
+
+    /**
+     * Set the Metrics object
+     *
+     * @param MetricsInterface $metrics
+     * @return void
+     */
+    public function setMetrics(MetricsInterface $metrics) {
+        $this->metrics = $metrics;
     }
 }

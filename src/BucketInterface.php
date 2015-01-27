@@ -10,4 +10,13 @@ interface BucketInterface extends \Psr\Log\LoggerAwareInterface {
      * @return boolean
      */
     public function enabled(BehaviorInterface $behavior);
+
+    /**
+     * Get the bucket index.
+     *
+     * Useful for metrics.
+     *
+     * @return integer
+     */
+    public function getIndex();
 }
