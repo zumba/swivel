@@ -1,7 +1,9 @@
 <?php
 namespace Zumba\Swivel\Metrics;
 
-class NullReporter implements \Zumba\Swivel\MetricsInterface {
+final class NullReporter implements \Zumba\Swivel\MetricsInterface {
+
+    const DEFAULT_NAMESPACE = 'null_reporter';
 
     /**
      * Zumba\Swivel\Metrics\StatsD

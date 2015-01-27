@@ -25,6 +25,21 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $index->getValue($config));
     }
 
+    public function testSetMetrics() {
+        $config = new Config();
+        $image = new \ReflectionClass($config);
+        $metrics = $image->getProperty('metrics');
+        $metrics->setAccessible(true);
+        $this->assertNull($metrics->getValue($config));
+
+        $metricsInstance = $this->getMockBuilder('Zumba\Swivel\Metrics\StatsDReporter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $config->setMetrics($metricsInstance);
+        $this->assertSame($metricsInstance, $metrics->getValue($config));
+    }
+
     public function testAddMapInterface() {
         $map = $this->getMock('Zumba\Swivel\MapInterface');
         $map->expects($this->once())->method('setLogger');

@@ -4,6 +4,7 @@ namespace Tests;
 use \Zumba\Swivel\Builder;
 use \Zumba\Swivel\Map;
 use \Psr\Log\NullLogger;
+use \Zumba\Swivel\Metrics\NullReporter;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase {
     public function testAddBehaviorNotEnabled() {
@@ -114,6 +115,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', null, ['Test', $bucket]);
+        $builder->setMetrics(new NullReporter());
         $builder->setLogger(new NullLogger());
         $builder->defaultBehavior('abc');
         $this->assertSame('abc', $builder->execute());
@@ -125,6 +127,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $builder = new Builder('Test', $bucket);
         $strategy = function() {};
 
+        $builder->setMetrics(new NullReporter());
         $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
