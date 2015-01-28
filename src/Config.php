@@ -66,7 +66,7 @@ class Config implements ConfigInterface {
      * @return \Zumba\Swivel\MetricsInterface
      */
     public function getMetrics() {
-        return $this->metrics ?: new Metrics\NullReporter();
+        return $this->metrics;
     }
 
     /**

@@ -28,7 +28,11 @@ class Manager implements ManagerInterface {
     public function __construct(ConfigInterface $config) {
         $this->setLogger($config->getLogger());
         $this->setBucket($config->getBucket());
-        $this->setMetrics($config->getMetrics());
+
+        if ($metrics = $config->getMetrics()) {
+            $this->setMetrics($metrics);
+        }
+
         $this->logger->debug('Swivel - Manager created.');
     }
 
@@ -43,7 +47,9 @@ class Manager implements ManagerInterface {
         $this->logger->debug('Swivel - Generating builder for feature "' . $slug . '"');
         $builder = new Builder($slug, $this->bucket);
         $builder->setLogger($this->logger);
-        $builder->setMetrics($this->metrics);
+
+        $this->metrics && $builder->setMetrics($this->metrics);
+
         return $builder;
     }
 

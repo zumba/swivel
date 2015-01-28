@@ -3,7 +3,8 @@ namespace Tests;
 
 use \Zumba\Swivel\Config,
     \Zumba\Swivel\Bucket,
-    \Zumba\Swivel\MapInterface;
+    \Zumba\Swivel\MapInterface,
+    \Zumba\Swivel\MetricsInterface;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase {
 
@@ -32,9 +33,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $metrics->setAccessible(true);
         $this->assertNull($metrics->getValue($config));
 
-        $metricsInstance = $this->getMockBuilder('Zumba\Swivel\Metrics\StatsDReporter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metricsInstance = $this->getMock('Zumba\Swivel\MetricsInterface');
 
         $config->setMetrics($metricsInstance);
         $this->assertSame($metricsInstance, $metrics->getValue($config));

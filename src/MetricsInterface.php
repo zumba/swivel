@@ -2,6 +2,12 @@
 namespace Zumba\Swivel;
 
 interface MetricsInterface {
+
+    /**
+     * Namespace used as a default
+     */
+    const DEFAULT_NAMESPACE = 'Swivel';
+
     /**
      * Send a count
      *
@@ -94,7 +100,7 @@ interface MetricsInterface {
      * @param string $namespace
      * @return void
      */
-    public function setNamespace($namespace = self::DEFAULT_NAMESPACE);
+    public function setNamespace($namespace = MetricsInterface::DEFAULT_NAMESPACE);
 
     /**
      * Start memory "profiling"

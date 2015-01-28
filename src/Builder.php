@@ -124,9 +124,9 @@ class Builder implements BuilderInterface {
         $behavior = $this->behavior ?: $this->getBehavior(null);
         $behaviorSlug = $behavior->getSlug();
 
-        $this->startMetrics($behaviorSlug);
+        $this->metrics && $this->startMetrics($behaviorSlug);
         $result = $behavior->execute($this->args ?: []);
-        $this->stopMetrics($behaviorSlug);
+        $this->metrics && $this->stopMetrics($behaviorSlug);
 
         return $result;
     }
