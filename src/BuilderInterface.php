@@ -48,4 +48,12 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
      * @return mixed
      */
     public function execute();
+
+    /**
+     * Set a metrics object
+     *
+     * @param \Zumba\Swivel\MetricsInterface $metrics
+     * @return void
+     */
+    public function setMetrics(MetricsInterface $metrics);
 }

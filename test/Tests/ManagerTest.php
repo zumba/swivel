@@ -5,6 +5,7 @@ use \Zumba\Swivel\Bucket;
 use \Zumba\Swivel\Builder;
 use \Zumba\Swivel\Manager;
 use \Zumba\Swivel\Config;
+use Zumba\Swivel\MetricsInterface;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase {
     public function testForFeature() {
@@ -156,5 +157,21 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
             ->will($this->returnValue('default'));
 
         $this->assertEquals('default', $manager->invoke('Test.version.a', 'abc', 'default'));
+    }
+
+    public function testSetMetrics() {
+        $config = $this->getMock('Zumba\Swivel\Config', ['getMetrics']);
+        $metricsInstance = $this->getMock('Zumba\Swivel\MetricsInterface');
+
+        $config
+            ->expects($this->once())
+            ->method('getMetrics')
+            ->will($this->returnValue($metricsInstance));
+
+        $manager = new Manager($config);
+        $image = new \ReflectionClass($manager);
+        $metrics = $image->getProperty('metrics');
+        $metrics->setAccessible(true);
+        $this->assertSame($metricsInstance, $metrics->getValue($manager));
     }
 }

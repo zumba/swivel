@@ -39,20 +39,10 @@ class Bucket implements BucketInterface {
     protected $index;
 
     /**
-     * Keys used by Zumba\Swivel\Bucket::randomIndex to select a random constant
-     *
-     * @var array
-     */
-    private $keys = [
-        'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH',
-        'SIXTH', 'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH'
-    ];
-
-    /**
      * Zumba\Swivel\Bucket
      *
      * @param \Zumba\Swivel\MapInterface $featureMap
-     * @param binary|null $index
+     * @param integer|null $index
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(MapInterface $featureMap, $index = null, LoggerInterface $logger = null) {
@@ -73,22 +63,22 @@ class Bucket implements BucketInterface {
     }
 
     /**
-     * Get a random binary index
+     * Get the bucket index.
      *
-     * @return binary
-     */
-    protected function randomIndex() {
-        $key = $this->keys[$this->randomNumber()];
-        $this->logger->info('Swivel - Generated random bucket.', compact('key'));
-        return constant("static::$key");
-    }
-
-    /**
-     * Return a random integer between 0 and 9
+     * Useful for metrics.
      *
      * @return integer
      */
-    private function randomNumber() {
-        return mt_rand(0, 9);
+    public function getIndex() {
+        return $this->index;
+    }
+
+    /**
+     * Get a random index
+     *
+     * @return integer
+     */
+    protected function randomIndex() {
+        return mt_rand(1, 10);
     }
 }
