@@ -5,8 +5,6 @@
 
 ***Swivel*** is a fresh spin on an old idea: [Feature Flags](http://en.wikipedia.org/wiki/Feature_toggle) (toggles, bits, switches, etc.).
 
-**Important:** This software is still under initial development.  Not all features are complete, and the API may change.
-
 Typical Feature Flags are *all* or *nothing*: either the feature is on for everyone, or it is off for everyone.
 
 ```php
