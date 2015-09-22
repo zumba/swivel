@@ -35,11 +35,25 @@ class Map implements MapInterface {
         $this->map = $this->parse($map);
     }
 
+    /**
+     * For serialization, removing logger since we can't guarantee a safe serialization and unserialization.
+     *
+     * @return array
+     */
     public function __sleep()
     {
         return ['map'];
     }
 
+    /**
+     * Ensure a null logger is in place post unserilization so there's no issues.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        $this->setLogger(new NullLogger());
+    }
 
     /**
      * Merge this map with another map and return a new MapInterface

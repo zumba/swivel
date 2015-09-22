@@ -6,6 +6,27 @@ use \Zumba\Swivel\Bucket;
 
 class MapTest extends \PHPUnit_Framework_TestCase {
 
+    public function testNoLoggerAfterSerialization()
+    {
+        $serializedMap = serialize(new Map(['feature.test' => [1,2,3]]));
+        $this->assertNotContains('logger', $serializedMap);
+    }
+
+    /**
+     * @depends testNoLoggerAfterSerialization
+     */
+    public function testLoggerInPlaceAfterUnserialization()
+    {
+        $serializedMap = serialize(new Map(['feature.test' => [1,2,3]]));
+        $map = unserialize($serializedMap);
+
+        $reflObject = new \ReflectionObject($map);
+        $loggerReflProperty = $reflObject->getProperty('logger');
+        $loggerReflProperty->setAccessible(true);
+        $logger = $loggerReflProperty->getValue($map);
+        $this->assertInstanceOf('\Psr\Log\LoggerInterface', $logger);
+    }
+
     /**
      * @dataProvider parseProvider
      */
