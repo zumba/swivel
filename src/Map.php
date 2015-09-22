@@ -35,6 +35,12 @@ class Map implements MapInterface {
         $this->map = $this->parse($map);
     }
 
+    public function __sleep()
+    {
+        return ['map'];
+    }
+
+
     /**
      * Merge this map with another map and return a new MapInterface
      *
@@ -162,20 +168,5 @@ class Map implements MapInterface {
     public function parse(array $map) {
         $this->logger->info('Swivel - Parsing feature map.', compact('map'));
         return array_combine(array_keys($map), array_map([$this, 'reduceToBitmask'], $map));
-    }
-
-    public static function __set_state(array $stateArray)
-    {
-        if (!array_key_exists('map', $stateArray)) {
-            throw new \RuntimeException('"map" element does not exist in state array');
-        }
-
-        $map = new static();
-        $reflObject = new \ReflectionObject($map);
-        $reflProp = $reflObject->getProperty('map');
-        $reflProp->setAccessible(true);
-        $reflProp->setValue($map, $stateArray['map']);
-
-        return $map;
     }
 }
