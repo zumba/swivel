@@ -3,7 +3,7 @@ namespace Zumba\Swivel;
 
 use \Zumba\Swivel\MapInterface,
     \Psr\Log\LoggerInterface,
-    \Psr\Log\NullLogger;
+    \Zumba\Swivel\Logging\NullLogger;
 
 class Bucket implements BucketInterface {
 
