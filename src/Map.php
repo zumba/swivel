@@ -66,7 +66,7 @@ class Map implements MapInterface {
      * @return string        Implementaiton of logger class to be passed to the Map class
      */
     public static function __set_state($mapData) {
-        $map = new Map($mapData['map'], $mapData['logger']);
+        $map = new static($mapData['map'], $mapData['logger']);
         return $map;
     }
 
