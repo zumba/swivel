@@ -14,10 +14,10 @@ use \Psr\Log\NullLogger as PsrNullLogger;
  * 
  * This logger extends the PSR Compliant NullLogger to implement __set_state()
  * This allows default support for var_export() compatable code generation.
- * Any logger you implement will n
+ * Any logger you implement will need to return a PSR compliant logger instance 
+ * In the __set_state() function for var_export() to work as expected.
  */
-class NullLogger extends PsrNullLogger
-{
+class NullLogger extends PsrNullLogger {
 
     /**
      * Set_state
@@ -33,8 +33,7 @@ class NullLogger extends PsrNullLogger
      * @param array $objData Array of logger data needed to reconsturct logger class
      * @return string           Implementaiton of logger class to be passed to the Map class
      */
-    public static function __set_state($objData = array())
-    {
+    public static function __set_state($objData = array()) {
         return null;
     }
 }
