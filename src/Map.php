@@ -28,7 +28,7 @@ class Map implements MapInterface {
      * ]
      *
      * @param array $map
-     * @param \Psr\Log\NullLogger $logger
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(array $map = [], LoggerInterface $logger = null) {
         $this->setLogger($logger ?: new NullLogger());
