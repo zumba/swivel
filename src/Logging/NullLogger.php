@@ -18,22 +18,22 @@ use \Psr\Log\NullLogger as PsrNullLogger;
  */
 class NullLogger extends PsrNullLogger
 {
-    
+
     /**
-     * __set_state
+     * Set_state
      *
      * Support reloading class instance via var_export generated code
      * 
      * This method is used to rebuild a valid implementation of the parent logger class.
      * You get an array of class properties and data that you use to create a new instance
-     * and return back to the calling code. 
+     * And return back to the calling code. 
      *
      * The NullLogger interface returns null, so we do that here.
      * 
-     * @param  array  $obj_data array of logger data needed to reconsturct logger
+     * @param array $objData Array of logger data needed to reconsturct logger class
      * @return string           Implementaiton of logger class to be passed to the Map class
      */
-    public static function __set_state($obj_data = array())
+    public static function __set_state($objData = array())
     {
         return null;
     }
