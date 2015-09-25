@@ -72,6 +72,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         eval('$map_eval_2 = '.$code2.';');
 
         $this->assertEquals($expected, $map_eval_1->add($map_eval_2)->getMapData());
+
+        $this->assertTrue($map_eval_1->enabled('a', 1));
     }
 
     public function parseProvider() {
