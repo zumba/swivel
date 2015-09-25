@@ -2,7 +2,7 @@
 namespace Zumba\Swivel;
 
 use \Psr\Log\LoggerInterface,
-    \Psr\Log\NullLogger;
+    \Zumba\Swivel\Logging\NullLogger;
 
 class Config implements ConfigInterface {
 
@@ -34,7 +34,7 @@ class Config implements ConfigInterface {
      *
      * @param mixed $map
      * @param integer|null $index
-     * @param LoggerInterface|null $logger
+     * @param \Psr\Log\LoggerInterface|null $logger
      */
     public function __construct($map = [], $index = null, LoggerInterface $logger = null) {
         $this->setLogger($logger ?: $this->getLogger());

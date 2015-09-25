@@ -4,7 +4,7 @@ namespace Zumba\Swivel;
 use \Zumba\Swivel\BucketInterface,
     \Zumba\Swivel\Behavior,
     \Psr\Log\LoggerInterface,
-    \Psr\Log\NullLogger;
+    \Zumba\Swivel\Logging\NullLogger;
 
 class Builder implements BuilderInterface {
 

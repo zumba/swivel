@@ -2,7 +2,7 @@
 namespace Zumba\Swivel;
 
 use \Psr\Log\LoggerInterface,
-    \Psr\Log\NullLogger;
+    \Zumba\Swivel\Logging\NullLogger;
 
 class Map implements MapInterface {
 
@@ -75,6 +75,19 @@ class Map implements MapInterface {
         $maps = array_slice(func_get_args(), 1);
         $data = array_reduce($maps, $combine, $combine($this->map, $map->getMapData()));
         return new Map($data, $this->logger);
+    }
+
+    /**
+     * SetState 
+     *
+     * Support reloading class via var_export definition.
+     * 
+     * @param array $mapData Array of logger data needed to reconsturct logger
+     * @return string        Implementaiton of logger class to be passed to the Map class
+     */
+    public static function __set_state($mapData) {
+        $map = new static($mapData['map'], $mapData['logger']);
+        return $map;
     }
 
     /**
