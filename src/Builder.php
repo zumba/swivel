@@ -11,6 +11,7 @@ class Builder implements BuilderInterface {
     use \Psr\Log\LoggerAwareTrait;
 
     const DEFAULT_SLUG = '__swivel_default';
+    const DEFAULT_STRATEGY = '__swivel_default_strategy';
 
     /**
      * Arguments to be passed to the behavior
@@ -140,9 +141,9 @@ class Builder implements BuilderInterface {
      * @param mixed $strategy
      * @return \Zumba\Swivel\BehaviorInterface
      */
-    public function getBehavior($slug, $strategy = null) {
+    public function getBehavior($slug, $strategy = self::DEFAULT_STRATEGY) {
         $this->logger->debug('Swivel - Creating new behavior.', compact('slug'));
-        if (empty($strategy)) {
+        if ($strategy === static::DEFAULT_STRATEGY) {
             $strategy = $slug;
             $slug = static::DEFAULT_SLUG;
         }
