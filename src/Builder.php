@@ -149,12 +149,31 @@ class Builder implements BuilderInterface {
         }
 
         if (!is_callable($strategy)) {
-            $strategy = function() use ($strategy) {
-                return $strategy;
-            };
+            $strategy = $this->makeCallable($strategy);
         }
         $slug = $this->slug . Map::DELIMITER . $slug;
         return new Behavior($slug, $strategy, $this->logger);
+    }
+
+    /**
+     * Make a thing callable if it's protected or private or just a value to return
+     * 
+     * @param mixed $strategy
+     * @return \Closure
+     */
+    protected function makeCallable($strategy) {
+        $closure = function () use ($strategy) {
+            return is_callable($strategy) ? call_user_func_array($strategy, func_get_args()) : $strategy;
+        };
+        if (is_array($strategy) && isset($strategy[0], $strategy[1]) && method_exists($strategy[0], $strategy[1])) {
+            return $closure->bindTo(null, $strategy[0]);
+        } else if (is_string($strategy) && strpos($strategy, '::')) {
+            list ($className, $method) = explode('::', $strategy);
+            if (method_exists($className, $method)) {
+                return $closure->bindTo(null, $className);
+            }
+        }
+        return $closure;
     }
 
     /**
