@@ -133,4 +133,58 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
     }
+
+    public function testGetBehaviorProtectedMethod() {
+        $map = $this->getMock('Zumba\Swivel\Map');
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
+        $builder = new Builder('Test', $bucket);
+        $strategy = [$this, 'protectedMethod'];
+
+        $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
+        $builder->setLogger(new NullLogger());
+        $behavior = $builder->getBehavior('a', $strategy);
+        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
+
+        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
+            'Test that the protected method is able to be called');
+    }
+
+    public function testGetBehaviorPrivateMethod() {
+        $map = $this->getMock('Zumba\Swivel\Map');
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
+        $builder = new Builder('Test', $bucket);
+        $strategy = [$this, 'privateMethod'];
+
+        $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
+        $builder->setLogger(new NullLogger());
+        $behavior = $builder->getBehavior('a', $strategy);
+        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
+
+        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
+            'Test that the private method is able to be called');
+    }
+
+    /**
+     * Used for testing that protected method is called with proper arguments
+     * 
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    protected function protectedMethod ($arg1, $arg2) {
+        return $arg1.$arg2;
+    }
+
+    /**
+     * Used for testing that private method is called with proper arguments
+     * 
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    private function privateMethod($arg1, $arg2) {
+        return $arg1.$arg2;
+    }
 }

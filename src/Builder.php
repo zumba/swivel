@@ -149,9 +149,16 @@ class Builder implements BuilderInterface {
         }
 
         if (!is_callable($strategy)) {
-            $strategy = function() use ($strategy) {
-                return $strategy;
-            };
+            if (is_array($strategy) && count($strategy) === 2 && is_object($strategy[0]) && is_string($strategy[1])) {
+                $closure = function () use ($strategy) {
+                    return call_user_func_array($strategy, func_get_args());
+                };
+                $strategy = $closure->bindTo($strategy[0], $strategy[0]);
+            } else {
+                $strategy = function() use ($strategy) {
+                    return $strategy;
+                };
+            }
         }
         $slug = $this->slug . Map::DELIMITER . $slug;
         return new Behavior($slug, $strategy, $this->logger);
