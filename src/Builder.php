@@ -117,9 +117,9 @@ class Builder implements BuilderInterface {
     /**
      * Add a default behavior.
      *
-     * Will be used if all other behaviors are not enabled for the user's bucket.
+     * Will be used if all other behaviors and values are not enabled for the user's bucket.
      *
-     * @param mixed $strategy
+     * @param callable $strategy
      * @param array $args
      * @return \Zumba\Swivel\BuilderInterface
      */
@@ -131,6 +131,27 @@ class Builder implements BuilderInterface {
         }
         if (!$this->behavior) {
             $this->setBehavior($this->getBehavior($strategy), $args);
+        }
+        return $this;
+    }
+
+    /**
+     * Add a default value.
+     *
+     * Will be used if all other behaviors and values are not enabled for the user's bucket.
+     *
+     * @param mixed $value
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function defaultValue($value) {
+        if ($this->defaultWaived) {
+            $exception = new \LogicException('Defined a default alue after `noDefault` was called.');
+            $this->logger->critical('Swivel', compact('exception'));
+            throw $exception;
+        }
+        if (!$this->behavior) {
+            $callable = function() use ($value) { return $value; };
+            $this->setBehavior($this->getBehavior($callable));
         }
         return $this;
     }
