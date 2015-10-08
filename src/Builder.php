@@ -162,7 +162,7 @@ class Builder implements BuilderInterface {
      * @return mixed
      */
     public function execute() {
-        $behavior = $this->behavior ?: $this->getBehavior(null);
+        $behavior = $this->behavior ?: $this->getBehavior(function() { return null; });
         $behaviorSlug = $behavior->getSlug();
 
         $this->metrics && $this->startMetrics($behaviorSlug);
