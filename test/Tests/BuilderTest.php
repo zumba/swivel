@@ -166,6 +166,38 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
             'Test that the private method is able to be called');
     }
 
+    public function testGetBehaviorProtectedStaticMethod() {
+        $map = $this->getMock('Zumba\Swivel\Map');
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
+        $builder = new Builder('Test', $bucket);
+        $strategy = '\Tests\BuilderTest::protectedStaticMethod';
+
+        $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
+        $builder->setLogger(new NullLogger());
+        $behavior = $builder->getBehavior('a', $strategy);
+        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
+
+        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
+            'Test that the protected static method is able to be called');
+    }
+
+    public function testGetBehaviorPrivateStaticMethod() {
+        $map = $this->getMock('Zumba\Swivel\Map');
+        $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
+        $builder = new Builder('Test', $bucket);
+        $strategy = '\Tests\BuilderTest::privateStaticMethod';
+
+        $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
+        $builder->setLogger(new NullLogger());
+        $behavior = $builder->getBehavior('a', $strategy);
+        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
+
+        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
+            'Test that the private static method is able to be called');
+    }
+
     /**
      * Used for testing that protected method is called with proper arguments
      * 
@@ -173,7 +205,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
      * @param string $arg2
      * @return string Args concatenated together
      */
-    protected function protectedMethod ($arg1, $arg2) {
+    protected function protectedMethod($arg1, $arg2) {
         return $arg1.$arg2;
     }
 
@@ -185,6 +217,28 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
      * @return string Args concatenated together
      */
     private function privateMethod($arg1, $arg2) {
+        return $arg1.$arg2;
+    }
+
+    /**
+     * Used for testing that protected static method is called with proper arguments
+     * 
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    protected static function protectedStaticMethod($arg1, $arg2) {
+        return $arg1.$arg2;
+    }
+
+    /**
+     * Used for testing that private static method is called with proper arguments
+     * 
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    private static function privateStaticMethod($arg1, $arg2) {
         return $arg1.$arg2;
     }
 }
