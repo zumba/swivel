@@ -96,6 +96,25 @@ class Builder implements BuilderInterface {
     }
 
     /**
+     * Add a value to be returned when the builder is executed.
+     *
+     * Value will only be returned if it is enabled for the user's bucket.
+     *
+     * @param string $slug
+     * @param mixed $value
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function addValue($slug, $value) {
+        $behavior = $this->getBehavior($slug, function() use ($value) {
+            return $value;
+        });
+        if ($this->bucket->enabled($behavior)) {
+            $this->setBehavior($behavior);
+        }
+        return $this;
+    }
+
+    /**
      * Add a default behavior.
      *
      * Will be used if all other behaviors are not enabled for the user's bucket.
