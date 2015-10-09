@@ -183,11 +183,19 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider falseyValueProvider
      */
-    public function testShorthandFalseyValuesAllowed($falseyValue) {
+    public function testFalseyValuesAllowedInBehaviors($falseyValue) {
         $swivel = new Manager(new Config($this->map, 10));
         $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', function() use ($falseyValue) {
             return $falseyValue;
         }));
+    }
+
+    /**
+     * @dataProvider falseyValueProvider
+     */
+    public function testFalseyValuesAllowed($falseyValue) {
+        $swivel = new Manager(new Config($this->map, 10));
+        $this->assertSame($falseyValue, $swivel->returnValue('OldFeature.Legacy', $falseyValue));
     }
 
     public function allBucketProvider() {
