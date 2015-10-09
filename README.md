@@ -307,8 +307,7 @@ Lazily adds a behavior to this feature that will return the provided value.  It 
 
 Param                      | Type       | Details
 :--------------------------|:-----------|:--------
-**$strategy**              | *callable* | The strategy to execute if no other feature behaviors are enabled for the user's bucket. Since version 2.0.0 `$strategy` must be a callable.  If you want to return a simple value, use `Builder::defaultValue` instead.
-**$args**<br/>*(optional)* | *array*    | Parameters to pass to the `$strategy` callable if it is executed.
+**$value**              | *mixed* | The value to return if no other feature behaviors are enabled for the user's bucket. If you want ***Swivel*** to execute a callable, use `Builder::defaultBehavior` instead.
 
 ##### Examples
 
