@@ -116,11 +116,11 @@ public function search($params = []) {
         ->execute();
 }
 
-public function normalSearch($params) {
+protected function normalSearch($params) {
     // Tried and True method.
 }
 
-public function awesomeSearch($params) {
+protected function awesomeSearch($params) {
     // Super cool new search method.
 }
 ```
@@ -210,6 +210,27 @@ $result = $swivel->invoke('Search.New', [$this, 'search'], [$this, 'noOp']);
 $result = $swivel->invoke('Search.New', [$this, 'search']);
 ```
 
+#### returnValue($slug, $a, $b)
+
+Shorthand syntactic sugar for invoking a simple feature behavior using `Builder::addValue`.  Useful for ternary style code.
+
+Param                   | Type     | Details
+:-----------------------|:---------|:--------
+**$slug**               | *string* | The first section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` would be `"Test"`
+**$a**                  | *mixed*  | The value to return if the `$slug` is enabled for the user's bucket.
+**$b**<br/>*(optional)* | *mixed*  | The value to return if the `$slug` is not enabled for the user's bucket.  If omitted, `returnValue` will return `null` if the feature slug is not enabled.
+
+##### Examples
+
+```php
+// without Swivel
+$result = $newSearch ? 'Everything' : null;
+
+// Zumba\Swivel\Manager::returnValue
+$result = $swivel->returnValue('Search.New', 'Everything', null);
+$result = $swivel->returnValue('Search.New', 'Everything');
+```
+
 ### Zumba\Swivel\Builder
 
 The `Builder` API is the primary way that you will write ***Swivel*** code.  You get a new instance of the `Builder` when you call `Manager::forFeature`.
@@ -218,11 +239,11 @@ The `Builder` API is the primary way that you will write ***Swivel*** code.  You
 
 Lazily adds a behavior to this feature that will only be executed if the feature is enabled for the user's bucket.
 
-Param                      | Type     | Details
-:--------------------------|:---------|:--------
-**$slug**                  | *string* | The second section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` here would be `"Version.Two"`
-**$strategy**              | *mixed*  | The strategy to execute if the `$slug` is enabled for the user's bucket. If `$strategy` is not a callable it will be wrapped in an anonymous function for you and treated as the evaluated result.
-**$args**<br/>*(optional)* | *array*  | Parameters to pass to the `$strategy` callable if it is executed.
+Param                      | Type        | Details
+:--------------------------|:------------|:--------
+**$slug**                  | *string*    | The second section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` here would be `"Version.Two"`
+**$strategy**              | *callable*  | The strategy to execute if the `$slug` is enabled for the user's bucket. Since version 2.0.0 `$strategy` must be a callable.  If you want to return a simple value, use `Builder::addValue` instead.
+**$args**<br/>*(optional)* | *array*     | Parameters to pass to the `$strategy` callable if it is executed.
 
 ##### Examples
 
@@ -236,18 +257,40 @@ $builder
     // Callable.  Will return the result of $obj->someMethod('c', 'd');
     ->addBehavior('versionB', [$obj, 'someMethod'], ['c', 'd'])
 
-     // Literal. Will return 'result' if executed
+     // Since version 2.0.0, this will throw a \LogicException.  Use `addValue` instead.
     ->addBehavior('versionC', 'result');
+```
+
+#### addValue($slug, $value)
+
+Lazily adds a behavior to this feature that will return the value provided.  It will only be executed if the feature is enabled for the user's bucket.
+
+Param                      | Type     | Details
+:--------------------------|:---------|:--------
+**$slug**                  | *string* | The second section of a feature map slug.  i.e., for the feature slug `"Test.Version.Two"`, the `$slug` here would be `"Version.Two"`
+**$value**                 | *mixed*  | The value to return if the `$slug` is enabled for the user's bucket. If `$value` is a callable it will not be executed.  If you want ***Swivel*** to execute a callable, use `Builder::addBehavior` instead.
+
+##### Examples
+
+```php
+$builder = $swivel->forFeature('Test');
+
+$builder
+    // This will return `'result'`
+    ->addValue('versionA', 'result')
+
+    // Callable.  This will not be executed; Swivel will just return the unexecuted callable.
+    ->addValue('versionB', [$obj, 'someMethod']);
 ```
 
 #### defaultBehavior($strategy, $args)
 
 Lazily adds a behavior to this feature that will only be executed if no other feature behaviors are enabled for the user's bucket.
 
-Param                      | Type    | Details
-:--------------------------|:--------|:--------
-**$strategy**              | *mixed* | The strategy to execute if no other feature behaviors are enabled for the user's bucket. If `$strategy` is not a callable it will be wrapped in an anonymous function for you and treated as the evaluated result.
-**$args**<br/>*(optional)* | *array* | Parameters to pass to the `$strategy` callable if it is executed.
+Param                      | Type       | Details
+:--------------------------|:-----------|:--------
+**$strategy**              | *callable* | The strategy to execute if no other feature behaviors are enabled for the user's bucket. Since version 2.0.0 `$strategy` must be a callable.  If you want to return a simple value, use `Builder::defaultValue` instead.
+**$args**<br/>*(optional)* | *array*    | Parameters to pass to the `$strategy` callable if it is executed.
 
 ##### Examples
 
@@ -256,6 +299,23 @@ $swivel
     ->forFeature('Test');
     ->addBehavior('New.Version', [$this, 'someMethod'], $args)
     ->defaultBehavior([$this, 'defaultMethod'], $args);
+```
+
+#### defaultValue($value)
+
+Lazily adds a behavior to this feature that will return the provided value.  It will only be executed if no other feature behaviors are enabled for the user's bucket.
+
+Param                      | Type       | Details
+:--------------------------|:-----------|:--------
+**$value**              | *mixed* | The value to return if no other feature behaviors are enabled for the user's bucket. If you want ***Swivel*** to execute a callable, use `Builder::defaultBehavior` instead.
+
+##### Examples
+
+```php
+$swivel
+    ->forFeature('Test');
+    ->addBehavior('New.Version', [$this, 'someMethod'], $args)
+    ->defaultValue('some default value');
 ```
 
 #### execute()

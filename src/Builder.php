@@ -96,11 +96,30 @@ class Builder implements BuilderInterface {
     }
 
     /**
+     * Add a value to be returned when the builder is executed.
+     *
+     * Value will only be returned if it is enabled for the user's bucket.
+     *
+     * @param string $slug
+     * @param mixed $value
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function addValue($slug, $value) {
+        $behavior = $this->getBehavior($slug, function() use ($value) {
+            return $value;
+        });
+        if ($this->bucket->enabled($behavior)) {
+            $this->setBehavior($behavior);
+        }
+        return $this;
+    }
+
+    /**
      * Add a default behavior.
      *
-     * Will be used if all other behaviors are not enabled for the user's bucket.
+     * Will be used if all other behaviors and values are not enabled for the user's bucket.
      *
-     * @param mixed $strategy
+     * @param callable $strategy
      * @param array $args
      * @return \Zumba\Swivel\BuilderInterface
      */
@@ -117,12 +136,33 @@ class Builder implements BuilderInterface {
     }
 
     /**
+     * Add a default value.
+     *
+     * Will be used if all other behaviors and values are not enabled for the user's bucket.
+     *
+     * @param mixed $value
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function defaultValue($value) {
+        if ($this->defaultWaived) {
+            $exception = new \LogicException('Defined a default value after `noDefault` was called.');
+            $this->logger->critical('Swivel', compact('exception'));
+            throw $exception;
+        }
+        if (!$this->behavior) {
+            $callable = function() use ($value) { return $value; };
+            $this->setBehavior($this->getBehavior($callable));
+        }
+        return $this;
+    }
+
+    /**
      * Execute the feature.
      *
      * @return mixed
      */
     public function execute() {
-        $behavior = $this->behavior ?: $this->getBehavior(null);
+        $behavior = $this->behavior ?: $this->getBehavior(function() { return null; });
         $behaviorSlug = $behavior->getSlug();
 
         $this->metrics && $this->startMetrics($behaviorSlug);
@@ -135,10 +175,10 @@ class Builder implements BuilderInterface {
     /**
      * Create and return a new Behavior.
      *
-     * If $strategy is not callable, it will be wraped in a closure that returns the strategy.
+     * The $strategy parameter must be a valid callable.
      *
      * @param string $slug
-     * @param mixed $strategy
+     * @param callable $strategy
      * @return \Zumba\Swivel\BehaviorInterface
      */
     public function getBehavior($slug, $strategy = self::DEFAULT_STRATEGY) {
@@ -149,31 +189,19 @@ class Builder implements BuilderInterface {
         }
 
         if (!is_callable($strategy)) {
-            $strategy = $this->makeCallable($strategy);
+            if (is_string($strategy)) {
+                $strategy = explode('::', $strategy);
+            }
+            if (!isset($strategy[0], $strategy[1]) || !method_exists($strategy[0], $strategy[1])) {
+                throw new \LogicException('Invalid callable passed to Zumba\Swivel\Builder::getBehavior');
+            }
+            $closure = function() use ($strategy) {
+                return call_user_func_array($strategy, func_get_args());
+            };
+            $strategy = $closure->bindTo(null, $strategy[0]);
         }
         $slug = $this->slug . Map::DELIMITER . $slug;
         return new Behavior($slug, $strategy, $this->logger);
-    }
-
-    /**
-     * Make a thing callable if it's protected or private or just a value to return
-     * 
-     * @param mixed $strategy
-     * @return \Closure
-     */
-    protected function makeCallable($strategy) {
-        $closure = function () use ($strategy) {
-            return is_callable($strategy) ? call_user_func_array($strategy, func_get_args()) : $strategy;
-        };
-        if (is_array($strategy) && isset($strategy[0], $strategy[1]) && method_exists($strategy[0], $strategy[1])) {
-            return $closure->bindTo(null, $strategy[0]);
-        } else if (is_string($strategy) && strpos($strategy, '::')) {
-            list ($className, $method) = explode('::', $strategy);
-            if (method_exists($className, $method)) {
-                return $closure->bindTo(null, $className);
-            }
-        }
-        return $closure;
     }
 
     /**

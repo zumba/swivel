@@ -56,9 +56,11 @@ class Manager implements ManagerInterface {
     /**
      * Syntactic sugar for creating simple feature toggles (ternary style)
      *
+     * Uses Builder::addBehavior
+     *
      * @param string $slug
-     * @param mixed $a
-     * @param mixed $b
+     * @param callable $a
+     * @param callable $b
      * @return mixed
      * @see \Zumba\Swivel\ManagerInterface
      */
@@ -67,7 +69,27 @@ class Manager implements ManagerInterface {
         $feature = array_shift($parts);
         return $this->forFeature($feature)
             ->addBehavior(implode(Map::DELIMITER, $parts), $a)
-            ->defaultBehavior($b)
+            ->defaultBehavior($b ? $b : function () use ($b) { return $b; })
+            ->execute();
+    }
+
+    /**
+     * Syntactic sugar for creating simple feature toggles (ternary style)
+     *
+     * Uses Builder::addValue
+     *
+     * @param string $slug
+     * @param mixed $a
+     * @param mixed $b
+     * @return mixed
+     * @see \Zumba\Swivel\ManagerInterface
+     */
+    public function returnValue($slug, $a, $b = null) {
+        $parts = explode(Map::DELIMITER, $slug);
+        $feature = array_shift($parts);
+        return $this->forFeature($feature)
+            ->addValue(implode(Map::DELIMITER, $parts), $a)
+            ->defaultValue($b)
             ->execute();
     }
 
