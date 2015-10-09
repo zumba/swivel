@@ -41,13 +41,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $builder
             ->expects($this->once())
             ->method('addBehavior')
-            ->with('version.a', 'abc')
+            ->with('version.a', $this->isType('callable'))
             ->will($this->returnValue($builder));
 
         $builder
             ->expects($this->once())
             ->method('defaultBehavior')
-            ->with(null)
+            ->with($this->isType('callable'))
             ->will($this->returnValue($builder));
 
         $builder
@@ -55,7 +55,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
             ->method('execute')
             ->will($this->returnValue('abc'));
 
-        $this->assertEquals('abc', $manager->invoke('Test.version.a', 'abc'));
+        $this->assertEquals('abc', $manager->invoke('Test.version.a', function() { return 'abc'; }));
     }
 
     public function testInvokeOneParamDisabled() {
@@ -75,20 +75,20 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $builder
             ->expects($this->once())
             ->method('addBehavior')
-            ->with('version.a', 'abc')
+            ->with('version.a', $this->isType('callable'))
             ->will($this->returnValue($builder));
 
         $builder
             ->expects($this->once())
             ->method('defaultBehavior')
-            ->with(null)
+            ->with($this->isType('callable'))
             ->will($this->returnValue($builder));
 
         $builder
             ->expects($this->once())
             ->method('execute');
 
-        $this->assertEquals(null, $manager->invoke('Test.version.a', 'abc'));
+        $this->assertEquals(null, $manager->invoke('Test.version.a', function() { return 'abc'; }));
     }
 
     public function testInvokeTwoParamEnabled() {

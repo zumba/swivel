@@ -46,11 +46,11 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame('OldAndBusted', $result);
     }
 
-    public function testSystemNewAlgorithmLiteral() {
+    public function testSystemNewAlgorithmValue() {
         $swivel = new Manager(new Config($this->map, 3));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', 'NewHotness')
-            ->defaultBehavior('OldAndBusted')
+            ->addValue('NewAlgorithm', 'NewHotness')
+            ->defaultValue('OldAndBusted')
             ->execute();
 
         $this->assertSame('NewHotness', $result);
@@ -62,8 +62,8 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     public function testDefaultBehaviorNeverCalledWhenAllBucketsOn($bucket) {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('OldFeature')
-            ->addBehavior('Legacy', 'AlwaysOn')
-            ->defaultBehavior('NeverOn')
+            ->addBehavior('Legacy', function() { return 'AlwaysOn'; })
+            ->defaultBehavior(function () { return 'NeverOn'; })
             ->execute();
 
         $this->assertSame('AlwaysOn', $result);
@@ -75,8 +75,8 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     public function testNewBehaviorNeverCalledWhenAllBucketsOff($bucket) {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('BadIdea')
-            ->addBehavior('Implementation', 'IsOn?')
-            ->defaultBehavior('NeverOn')
+            ->addBehavior('Implementation', function() { return 'IsOn?'; })
+            ->defaultBehavior(function () { return 'NeverOn'; })
             ->execute();
 
         $this->assertSame('NeverOn', $result);
@@ -85,8 +85,8 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     public function testDisableParentKillsChild() {
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->forFeature('ParentOff')
-            ->addBehavior('ChildOn', 'NeverWorks')
-            ->defaultBehavior('AlwaysDefault')
+            ->addBehavior('ChildOn', function() { return 'NeverWorks'; })
+            ->defaultBehavior(function() { return 'AlwaysDefault'; })
             ->execute();
 
         $this->assertSame('AlwaysDefault', $result);
@@ -130,32 +130,40 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
 
     public function testInvokeSystemNewAlgorithmValidBucket() {
         $swivel = new Manager(new Config($this->map, 1));
-        $result = $swivel->invoke('System.NewAlgorithm', 'NewHotness', 'OldAndBusted');
+        $result = $swivel->invoke(
+            'System.NewAlgorithm',
+            function() { return 'NewHotness'; },
+            function() { return 'OldAndBusted'; }
+        );
         $this->assertSame('NewHotness', $result);
     }
 
     public function testInvokeSystemNewAlgorithmInvalidBucket() {
         $swivel = new Manager(new Config($this->map, 10));
-        $result = $swivel->invoke('System.NewAlgorithm', 'NewHotness', 'OldAndBusted');
+        $result = $swivel->invoke(
+            'System.NewAlgorithm',
+            function() { return 'NewHotness'; },
+            function() { return 'OldAndBusted'; }
+        );
         $this->assertSame('OldAndBusted', $result);
     }
 
     public function testInvokeSystemNewAlgorithmValidBucketNoDefault() {
         $swivel = new Manager(new Config($this->map, 1));
-        $result = $swivel->invoke('System.NewAlgorithm', 'NewHotness');
+        $result = $swivel->invoke('System.NewAlgorithm', function() { return 'NewHotness'; });
         $this->assertSame('NewHotness', $result);
     }
 
     public function testInvokeSystemNewAlgorithmInvalidBucketNoDefault() {
         $swivel = new Manager(new Config($this->map, 10));
-        $result = $swivel->invoke('System.NewAlgorithm', 'NewHotness');
+        $result = $swivel->invoke('System.NewAlgorithm', function() { return 'NewHotness'; });
         $this->assertSame(null, $result);
     }
 
     public function testNoDefaultFeatureOn() {
         $swivel = new Manager(new Config($this->map, 2));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', 'NewHotness')
+            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
             ->noDefault()
             ->execute();
 
@@ -165,7 +173,7 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     public function testNoDefaultFeatureOff() {
         $swivel = new Manager(new Config($this->map, 8));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', 'NewHotness')
+            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
             ->noDefault()
             ->execute();
 
@@ -177,7 +185,9 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
      */
     public function testShorthandFalseyValuesAllowed($falseyValue) {
         $swivel = new Manager(new Config($this->map, 10));
-        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', $falseyValue));
+        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', function() use ($falseyValue) {
+            return $falseyValue;
+        }));
     }
 
     public function allBucketProvider() {
