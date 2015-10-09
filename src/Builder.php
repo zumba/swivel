@@ -145,7 +145,7 @@ class Builder implements BuilderInterface {
      */
     public function defaultValue($value) {
         if ($this->defaultWaived) {
-            $exception = new \LogicException('Defined a default alue after `noDefault` was called.');
+            $exception = new \LogicException('Defined a default value after `noDefault` was called.');
             $this->logger->critical('Swivel', compact('exception'));
             throw $exception;
         }
