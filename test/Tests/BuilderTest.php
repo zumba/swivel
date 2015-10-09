@@ -7,6 +7,51 @@ use \Psr\Log\NullLogger;
 use \Zumba\Swivel\MetricsInterface;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase {
+
+    /**
+     * Used for testing that protected method is called with proper arguments
+     *
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    protected function protectedMethod($arg1, $arg2) {
+        return $arg1 . $arg2;
+    }
+
+    /**
+     * Used for testing that private method is called with proper arguments
+     *
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    private function privateMethod($arg1, $arg2) {
+        return $arg1 . $arg2;
+    }
+
+    /**
+     * Used for testing that protected static method is called with proper arguments
+     *
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    protected static function protectedStaticMethod($arg1, $arg2) {
+        return $arg1 . $arg2;
+    }
+
+    /**
+     * Used for testing that private static method is called with proper arguments
+     *
+     * @param string $arg1
+     * @param string $arg2
+     * @return string Args concatenated together
+     */
+    private static function privateStaticMethod($arg1, $arg2) {
+        return $arg1 . $arg2;
+    }
+
     public function testAddBehaviorNotEnabled() {
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
@@ -196,49 +241,5 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
             'Test that the private static method is able to be called');
-    }
-
-    /**
-     * Used for testing that protected method is called with proper arguments
-     * 
-     * @param string $arg1
-     * @param string $arg2
-     * @return string Args concatenated together
-     */
-    protected function protectedMethod($arg1, $arg2) {
-        return $arg1.$arg2;
-    }
-
-    /**
-     * Used for testing that private method is called with proper arguments
-     * 
-     * @param string $arg1
-     * @param string $arg2
-     * @return string Args concatenated together
-     */
-    private function privateMethod($arg1, $arg2) {
-        return $arg1.$arg2;
-    }
-
-    /**
-     * Used for testing that protected static method is called with proper arguments
-     * 
-     * @param string $arg1
-     * @param string $arg2
-     * @return string Args concatenated together
-     */
-    protected static function protectedStaticMethod($arg1, $arg2) {
-        return $arg1.$arg2;
-    }
-
-    /**
-     * Used for testing that private static method is called with proper arguments
-     * 
-     * @param string $arg1
-     * @param string $arg2
-     * @return string Args concatenated together
-     */
-    private static function privateStaticMethod($arg1, $arg2) {
-        return $arg1.$arg2;
     }
 }
