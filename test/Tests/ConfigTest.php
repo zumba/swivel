@@ -1,21 +1,21 @@
 <?php
+
 namespace Tests;
 
-use \Zumba\Swivel\Config,
-    \Zumba\Swivel\Bucket,
-    \Zumba\Swivel\MapInterface,
-    \Zumba\Swivel\MetricsInterface;
+use Zumba\Swivel\Config;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase {
-
-    public function testGetBucket() {
+class ConfigTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetBucket()
+    {
         $index = 4;
-        $config = new Config(['A' => [7,8,9]], 4);
+        $config = new Config(['A' => [7, 8, 9]], 4);
         $bucket = $config->getBucket();
         $this->assertInstanceOf('Zumba\Swivel\Bucket', $bucket);
     }
 
-    public function testSetBucketIndex() {
+    public function testSetBucketIndex()
+    {
         $config = new Config();
         $image = new \ReflectionClass($config);
         $index = $image->getProperty('index');
@@ -26,7 +26,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $index->getValue($config));
     }
 
-    public function testSetMetrics() {
+    public function testSetMetrics()
+    {
         $config = new Config();
         $image = new \ReflectionClass($config);
         $metrics = $image->getProperty('metrics');
@@ -39,13 +40,15 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($metricsInstance, $metrics->getValue($config));
     }
 
-    public function testAddMapInterface() {
+    public function testAddMapInterface()
+    {
         $map = $this->getMock('Zumba\Swivel\MapInterface');
         $map->expects($this->once())->method('setLogger');
         $config = new Config($map);
     }
 
-    public function testAddDriverInterface() {
+    public function testAddDriverInterface()
+    {
         $driver = $this->getMock('Zumba\Swivel\DriverInterface');
         $map = $this->getMock('Zumba\Swivel\MapInterface');
 
@@ -61,7 +64,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
     /**
      * @expectedException \LogicException
      */
-    public function testUnknownObject() {
+    public function testUnknownObject()
+    {
         $config = new Config(new \stdClass());
     }
 }

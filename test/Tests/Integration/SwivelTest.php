@@ -1,52 +1,57 @@
 <?php
+
 namespace Tests\Integration;
 
-use \Zumba\Swivel\Config;
-use \Zumba\Swivel\Manager;
+use Zumba\Swivel\Config;
+use Zumba\Swivel\Manager;
 
-class SwivelTest extends \PHPUnit_Framework_TestCase {
-
+class SwivelTest extends \PHPUnit_Framework_TestCase
+{
     protected $map;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         $this->map = [
-            'System' => [1,2,3,4,5],
-            'System.NewAlgorithm' => [1,2,3,4,5],
-            'OldFeature' => [1,2,3,4,5,6,7,8,9,10],
-            'OldFeature.Legacy' => [1,2,3,4,5,6,7,8,9,10],
+            'System' => [1, 2, 3, 4, 5],
+            'System.NewAlgorithm' => [1, 2, 3, 4, 5],
+            'OldFeature' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            'OldFeature.Legacy' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             'BadIdea' => [],
             'BadIdea.Implementation' => [],
             'ParentOff' => [],
             'ParentOff.ChildOn' => [1],
-            'NewFeature' => [6,7,8],
+            'NewFeature' => [6, 7, 8],
             'NewFeature.SimpleStuff' => [8],
-            'NewFeature.ComplexStuff' => [6,7],
+            'NewFeature.ComplexStuff' => [6, 7],
             'NewFeature.ComplexStuff.VersionA' => [6],
-            'NewFeature.ComplexStuff.VersionB' => [7]
+            'NewFeature.ComplexStuff.VersionB' => [7],
         ];
     }
 
-    public function testSystemNewAlgorithmValidBucket() {
+    public function testSystemNewAlgorithmValidBucket()
+    {
         $swivel = new Manager(new Config($this->map, 4));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
-            ->defaultBehavior(function() { return 'OldAndBusted'; })
+            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
+            ->defaultBehavior(function () { return 'OldAndBusted'; })
             ->execute();
 
         $this->assertSame('NewHotness', $result);
     }
 
-    public function testSystemNewAlgorithmInvalidBucket() {
+    public function testSystemNewAlgorithmInvalidBucket()
+    {
         $swivel = new Manager(new Config($this->map, 9));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
-            ->defaultBehavior(function() { return 'OldAndBusted'; })
+            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
+            ->defaultBehavior(function () { return 'OldAndBusted'; })
             ->execute();
 
         $this->assertSame('OldAndBusted', $result);
     }
 
-    public function testSystemNewAlgorithmValue() {
+    public function testSystemNewAlgorithmValue()
+    {
         $swivel = new Manager(new Config($this->map, 3));
         $result = $swivel->forFeature('System')
             ->addValue('NewAlgorithm', 'NewHotness')
@@ -59,10 +64,11 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider allBucketProvider
      */
-    public function testDefaultBehaviorNeverCalledWhenAllBucketsOn($bucket) {
+    public function testDefaultBehaviorNeverCalledWhenAllBucketsOn($bucket)
+    {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('OldFeature')
-            ->addBehavior('Legacy', function() { return 'AlwaysOn'; })
+            ->addBehavior('Legacy', function () { return 'AlwaysOn'; })
             ->defaultBehavior(function () { return 'NeverOn'; })
             ->execute();
 
@@ -72,21 +78,23 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider allBucketProvider
      */
-    public function testNewBehaviorNeverCalledWhenAllBucketsOff($bucket) {
+    public function testNewBehaviorNeverCalledWhenAllBucketsOff($bucket)
+    {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('BadIdea')
-            ->addBehavior('Implementation', function() { return 'IsOn?'; })
+            ->addBehavior('Implementation', function () { return 'IsOn?'; })
             ->defaultBehavior(function () { return 'NeverOn'; })
             ->execute();
 
         $this->assertSame('NeverOn', $result);
     }
 
-    public function testDisableParentKillsChild() {
+    public function testDisableParentKillsChild()
+    {
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->forFeature('ParentOff')
-            ->addBehavior('ChildOn', function() { return 'NeverWorks'; })
-            ->defaultBehavior(function() { return 'AlwaysDefault'; })
+            ->addBehavior('ChildOn', function () { return 'NeverWorks'; })
+            ->defaultBehavior(function () { return 'AlwaysDefault'; })
             ->execute();
 
         $this->assertSame('AlwaysDefault', $result);
@@ -95,9 +103,10 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider branchingChildrenProvider
      */
-    public function testBranchingChildren($bucket, $assertOne, $assertTwo, $assertThree, $assertFour) {
-        $on = function() { return true; };
-        $off = function() { return false; };
+    public function testBranchingChildren($bucket, $assertOne, $assertTwo, $assertThree, $assertFour)
+    {
+        $on = function () { return true; };
+        $off = function () { return false; };
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('NewFeature')
             ->addBehavior('SimpleStuff', $on)
@@ -128,52 +137,58 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
         $this->$assertFour($result);
     }
 
-    public function testInvokeSystemNewAlgorithmValidBucket() {
+    public function testInvokeSystemNewAlgorithmValidBucket()
+    {
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function() { return 'NewHotness'; },
-            function() { return 'OldAndBusted'; }
+            function () { return 'NewHotness'; },
+            function () { return 'OldAndBusted'; }
         );
         $this->assertSame('NewHotness', $result);
     }
 
-    public function testInvokeSystemNewAlgorithmInvalidBucket() {
+    public function testInvokeSystemNewAlgorithmInvalidBucket()
+    {
         $swivel = new Manager(new Config($this->map, 10));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function() { return 'NewHotness'; },
-            function() { return 'OldAndBusted'; }
+            function () { return 'NewHotness'; },
+            function () { return 'OldAndBusted'; }
         );
         $this->assertSame('OldAndBusted', $result);
     }
 
-    public function testInvokeSystemNewAlgorithmValidBucketNoDefault() {
+    public function testInvokeSystemNewAlgorithmValidBucketNoDefault()
+    {
         $swivel = new Manager(new Config($this->map, 1));
-        $result = $swivel->invoke('System.NewAlgorithm', function() { return 'NewHotness'; });
+        $result = $swivel->invoke('System.NewAlgorithm', function () { return 'NewHotness'; });
         $this->assertSame('NewHotness', $result);
     }
 
-    public function testInvokeSystemNewAlgorithmInvalidBucketNoDefault() {
+    public function testInvokeSystemNewAlgorithmInvalidBucketNoDefault()
+    {
         $swivel = new Manager(new Config($this->map, 10));
-        $result = $swivel->invoke('System.NewAlgorithm', function() { return 'NewHotness'; });
+        $result = $swivel->invoke('System.NewAlgorithm', function () { return 'NewHotness'; });
         $this->assertSame(null, $result);
     }
 
-    public function testNoDefaultFeatureOn() {
+    public function testNoDefaultFeatureOn()
+    {
         $swivel = new Manager(new Config($this->map, 2));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
+            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
             ->noDefault()
             ->execute();
 
         $this->assertSame('NewHotness', $result);
     }
 
-    public function testNoDefaultFeatureOff() {
+    public function testNoDefaultFeatureOff()
+    {
         $swivel = new Manager(new Config($this->map, 8));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function() { return 'NewHotness'; })
+            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
             ->noDefault()
             ->execute();
 
@@ -183,9 +198,10 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider falseyValueProvider
      */
-    public function testFalseyValuesAllowedInBehaviors($falseyValue) {
+    public function testFalseyValuesAllowedInBehaviors($falseyValue)
+    {
         $swivel = new Manager(new Config($this->map, 10));
-        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', function() use ($falseyValue) {
+        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', function () use ($falseyValue) {
             return $falseyValue;
         }));
     }
@@ -193,24 +209,28 @@ class SwivelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider falseyValueProvider
      */
-    public function testFalseyValuesAllowed($falseyValue) {
+    public function testFalseyValuesAllowed($falseyValue)
+    {
         $swivel = new Manager(new Config($this->map, 10));
         $this->assertSame($falseyValue, $swivel->returnValue('OldFeature.Legacy', $falseyValue));
     }
 
-    public function allBucketProvider() {
-        return [ [1], [2], [3], [4], [5], [6], [7], [8], [9], [10] ];
+    public function allBucketProvider()
+    {
+        return [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]];
     }
 
-    public function branchingChildrenProvider() {
+    public function branchingChildrenProvider()
+    {
         return [
-            [ 6, 'assertFalse', 'assertTrue', 'assertTrue', 'assertFalse' ],
-            [ 7, 'assertFalse', 'assertTrue', 'assertFalse', 'assertTrue' ],
-            [ 8, 'assertTrue', 'assertFalse', 'assertFalse', 'assertFalse' ]
+            [6, 'assertFalse', 'assertTrue', 'assertTrue', 'assertFalse'],
+            [7, 'assertFalse', 'assertTrue', 'assertFalse', 'assertTrue'],
+            [8, 'assertTrue', 'assertFalse', 'assertFalse', 'assertFalse'],
         ];
     }
 
-    public function falseyValueProvider() {
-        return [ [0], [[]], [null], [''], [false] ];
+    public function falseyValueProvider()
+    {
+        return [[0], [[]], [null], [''], [false]];
     }
 }

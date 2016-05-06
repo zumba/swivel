@@ -1,20 +1,19 @@
 <?php
+
 namespace Zumba\Swivel;
 
-use \Zumba\Swivel\BucketInterface,
-    \Zumba\Swivel\Behavior,
-    \Psr\Log\LoggerInterface,
-    \Zumba\Swivel\Logging\NullLogger;
+use Zumba\Swivel\BucketInterface;
+use Zumba\Swivel\Behavior;
 
-class Builder implements BuilderInterface {
-
+class Builder implements BuilderInterface
+{
     use \Psr\Log\LoggerAwareTrait;
 
     const DEFAULT_SLUG = '__swivel_default';
     const DEFAULT_STRATEGY = '__swivel_default_strategy';
 
     /**
-     * Arguments to be passed to the behavior
+     * Arguments to be passed to the behavior.
      *
      * @var array
      */
@@ -37,19 +36,18 @@ class Builder implements BuilderInterface {
     /**
      * Whether this feature requires a default behavior.
      *
-     * @var boolean
+     * @var bool
      */
     protected $defaultWaived;
 
-
     /**
-     * Keys used in metrics
+     * Keys used in metrics.
      *
      * @var array
      */
     private $keys = [
         'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH',
-        'SIXTH', 'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH'
+        'SIXTH', 'SEVENTH', 'EIGHTH', 'NINTH', 'TENTH',
     ];
 
     /**
@@ -60,19 +58,20 @@ class Builder implements BuilderInterface {
     protected $metrics;
 
     /**
-     * Parent Feature slug
+     * Parent Feature slug.
      *
      * @var string
      */
     protected $slug;
 
     /**
-     * Zumba\Swivel\Builder
+     * Zumba\Swivel\Builder.
      *
-     * @param string $slug
+     * @param string          $slug
      * @param BucketInterface $bucket
      */
-    public function __construct($slug, BucketInterface $bucket) {
+    public function __construct($slug, BucketInterface $bucket)
+    {
         $this->slug = $slug;
         $this->bucket = $bucket;
     }
@@ -83,15 +82,18 @@ class Builder implements BuilderInterface {
      * Behavior will only be added if it is enabled for the user's bucket.
      *
      * @param string $slug
-     * @param mixed $strategy
-     * @param array $args
+     * @param mixed  $strategy
+     * @param array  $args
+     *
      * @return \Zumba\Swivel\BuilderInterface
      */
-    public function addBehavior($slug, $strategy, array $args = []) {
+    public function addBehavior($slug, $strategy, array $args = [])
+    {
         $behavior = $this->getBehavior($slug, $strategy);
         if ($this->bucket->enabled($behavior)) {
             $this->setBehavior($behavior, $args);
         }
+
         return $this;
     }
 
@@ -101,16 +103,19 @@ class Builder implements BuilderInterface {
      * Value will only be returned if it is enabled for the user's bucket.
      *
      * @param string $slug
-     * @param mixed $value
+     * @param mixed  $value
+     *
      * @return \Zumba\Swivel\BuilderInterface
      */
-    public function addValue($slug, $value) {
-        $behavior = $this->getBehavior($slug, function() use ($value) {
+    public function addValue($slug, $value)
+    {
+        $behavior = $this->getBehavior($slug, function () use ($value) {
             return $value;
         });
         if ($this->bucket->enabled($behavior)) {
             $this->setBehavior($behavior);
         }
+
         return $this;
     }
 
@@ -120,10 +125,12 @@ class Builder implements BuilderInterface {
      * Will be used if all other behaviors and values are not enabled for the user's bucket.
      *
      * @param callable $strategy
-     * @param array $args
+     * @param array    $args
+     *
      * @return \Zumba\Swivel\BuilderInterface
      */
-    public function defaultBehavior($strategy, array $args = []) {
+    public function defaultBehavior($strategy, array $args = [])
+    {
         if ($this->defaultWaived) {
             $exception = new \LogicException('Defined a default behavior after `noDefault` was called.');
             $this->logger->critical('Swivel', compact('exception'));
@@ -132,6 +139,7 @@ class Builder implements BuilderInterface {
         if (!$this->behavior) {
             $this->setBehavior($this->getBehavior($strategy), $args);
         }
+
         return $this;
     }
 
@@ -141,18 +149,21 @@ class Builder implements BuilderInterface {
      * Will be used if all other behaviors and values are not enabled for the user's bucket.
      *
      * @param mixed $value
+     *
      * @return \Zumba\Swivel\BuilderInterface
      */
-    public function defaultValue($value) {
+    public function defaultValue($value)
+    {
         if ($this->defaultWaived) {
             $exception = new \LogicException('Defined a default value after `noDefault` was called.');
             $this->logger->critical('Swivel', compact('exception'));
             throw $exception;
         }
         if (!$this->behavior) {
-            $callable = function() use ($value) { return $value; };
+            $callable = function () use ($value) { return $value; };
             $this->setBehavior($this->getBehavior($callable));
         }
+
         return $this;
     }
 
@@ -161,8 +172,9 @@ class Builder implements BuilderInterface {
      *
      * @return mixed
      */
-    public function execute() {
-        $behavior = $this->behavior ?: $this->getBehavior(function() { return null; });
+    public function execute()
+    {
+        $behavior = $this->behavior ?: $this->getBehavior(function () { return; });
         $behaviorSlug = $behavior->getSlug();
 
         $this->metrics && $this->startMetrics($behaviorSlug);
@@ -177,11 +189,13 @@ class Builder implements BuilderInterface {
      *
      * The $strategy parameter must be a valid callable.
      *
-     * @param string $slug
+     * @param string   $slug
      * @param callable $strategy
+     *
      * @return \Zumba\Swivel\BehaviorInterface
      */
-    public function getBehavior($slug, $strategy = self::DEFAULT_STRATEGY) {
+    public function getBehavior($slug, $strategy = self::DEFAULT_STRATEGY)
+    {
         $this->logger->debug('Swivel - Creating new behavior.', compact('slug'));
         if ($strategy === static::DEFAULT_STRATEGY) {
             $strategy = $slug;
@@ -195,12 +209,13 @@ class Builder implements BuilderInterface {
             if (!isset($strategy[0], $strategy[1]) || !method_exists($strategy[0], $strategy[1])) {
                 throw new \LogicException('Invalid callable passed to Zumba\Swivel\Builder::getBehavior');
             }
-            $closure = function() use ($strategy) {
+            $closure = function () use ($strategy) {
                 return call_user_func_array($strategy, func_get_args());
             };
             $strategy = $closure->bindTo(null, $strategy[0]);
         }
-        $slug = $this->slug . Map::DELIMITER . $slug;
+        $slug = $this->slug.Map::DELIMITER.$slug;
+
         return new Behavior($slug, $strategy, $this->logger);
     }
 
@@ -209,24 +224,26 @@ class Builder implements BuilderInterface {
      *
      * @return \Zumba\Swivel\BuilderInterface
      */
-    public function noDefault() {
+    public function noDefault()
+    {
         if ($this->behavior && $this->behavior->getSlug() === static::DEFAULT_SLUG) {
             $exception = new \LogicException('Called `noDefault` after a default behavior was defined.');
             $this->logger->critical('Swivel', compact('exception'));
             throw $exception;
         }
         $this->defaultWaived = true;
+
         return $this;
     }
 
     /**
-     * Set the behavior and it's args
+     * Set the behavior and it's args.
      *
      * @param \Zumba\Swivel\Behavior $behavior
-     * @param array $args
-     * @return void
+     * @param array                  $args
      */
-    protected function setBehavior(Behavior $behavior, array $args = []) {
+    protected function setBehavior(Behavior $behavior, array $args = [])
+    {
         $slug = $behavior->getSlug();
         $this->logger->debug('Swivel - Setting behavior.', compact('slug', 'args'));
         $this->behavior = $behavior;
@@ -234,22 +251,22 @@ class Builder implements BuilderInterface {
     }
 
     /**
-     * Set a metrics object
+     * Set a metrics object.
      *
      * @param \Zumba\Swivel\MetricsInterface $metrics
-     * @return void
      */
-    public function setMetrics(MetricsInterface $metrics) {
+    public function setMetrics(MetricsInterface $metrics)
+    {
         $this->metrics = $metrics;
     }
 
     /**
-     * Start collecting metrics about this feature
+     * Start collecting metrics about this feature.
      *
      * @param string $behaviorSlug
-     * @return void
      */
-    protected function startMetrics($behaviorSlug) {
+    protected function startMetrics($behaviorSlug)
+    {
         $metrics = $this->metrics;
         $bucketIndex = $this->bucket->getIndex();
 
@@ -263,12 +280,12 @@ class Builder implements BuilderInterface {
     }
 
     /**
-     * Stop collecting metrics about this feature
+     * Stop collecting metrics about this feature.
      *
      * @param string $behaviorSlug
-     * @return void
      */
-    protected function stopMetrics($behaviorSlug) {
+    protected function stopMetrics($behaviorSlug)
+    {
         $metrics = $this->metrics;
         $metrics->endMemoryProfile('Features', $behaviorSlug);
         $metrics->endTiming('Features', $behaviorSlug);

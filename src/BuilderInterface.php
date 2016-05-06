@@ -1,18 +1,20 @@
 <?php
+
 namespace Zumba\Swivel;
 
-interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
-
+interface BuilderInterface extends \Psr\Log\LoggerAwareInterface
+{
     /**
-     * Register a behavior
+     * Register a behavior.
      *
      * If $strategy is a callable it's return value will be returned when the behavior is executed;
      * if $strategy is not a callable, it will be directly returned by the behavior when it is
      * executed.
      *
      * @param string $slug
-     * @param mixed $strategy
-     * @param array $args
+     * @param mixed  $strategy
+     * @param array  $args
+     *
      * @return \Zumba\Swivel\BuilderInterface
      */
     public function addBehavior($slug, $strategy, array $args = []);
@@ -22,6 +24,7 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
      *
      * @param mixed $strategy
      * @param array $args
+     *
      * @return mixed
      */
     public function defaultBehavior($strategy, array $args = []);
@@ -30,7 +33,8 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
      * Creates a new Behavior object with an attached strategy.
      *
      * @param string $slug
-     * @param mixed $strategy
+     * @param mixed  $strategy
+     *
      * @return \Zumba\Swivel\Behavior
      */
     public function getBehavior($slug, $strategy = null);
@@ -50,10 +54,9 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface {
     public function execute();
 
     /**
-     * Set a metrics object
+     * Set a metrics object.
      *
      * @param \Zumba\Swivel\MetricsInterface $metrics
-     * @return void
      */
     public function setMetrics(MetricsInterface $metrics);
 }

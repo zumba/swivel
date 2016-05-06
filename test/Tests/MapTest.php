@@ -1,14 +1,15 @@
 <?php
+
 namespace Tests;
 
-use \Zumba\Swivel\Map;
-use \Zumba\Swivel\Bucket;
+use Zumba\Swivel\Map;
+use Zumba\Swivel\Bucket;
 
-class MapTest extends \PHPUnit_Framework_TestCase {
-
+class MapTest extends \PHPUnit_Framework_TestCase
+{
     public function testNoLoggerAfterSerialization()
     {
-        $serializedMap = serialize(new Map(['feature.test' => [1,2,3]]));
+        $serializedMap = serialize(new Map(['feature.test' => [1, 2, 3]]));
         $this->assertNotContains('logger', $serializedMap);
     }
 
@@ -17,7 +18,7 @@ class MapTest extends \PHPUnit_Framework_TestCase {
      */
     public function testLoggerInPlaceAfterUnserialization()
     {
-        $serializedMap = serialize(new Map(['feature.test' => [1,2,3]]));
+        $serializedMap = serialize(new Map(['feature.test' => [1, 2, 3]]));
         $map = unserialize($serializedMap);
 
         $reflObject = new \ReflectionObject($map);
@@ -30,7 +31,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider parseProvider
      */
-    public function testParse($map, $expected) {
+    public function testParse($map, $expected)
+    {
         $featureMap = new Map($map);
         $this->assertEquals($expected, $featureMap->parse($map));
     }
@@ -38,7 +40,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider enabledProvider
      */
-    public function testEnabled($assertion, $slug, $index, $map) {
+    public function testEnabled($assertion, $slug, $index, $map)
+    {
         $featureMap = new Map($map);
         $this->$assertion($featureMap->enabled($slug, $index));
     }
@@ -46,7 +49,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider diffProvider
      */
-    public function testDiff($a, $b, $expected) {
+    public function testDiff($a, $b, $expected)
+    {
         $map1 = new Map($a);
         $map2 = new Map($b);
         $this->assertEquals($expected, $map1->diff($map2)->getMapData());
@@ -55,7 +59,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider mergeProvider
      */
-    public function testMerge($a, $b, $expected) {
+    public function testMerge($a, $b, $expected)
+    {
         $map1 = new Map($a);
         $map2 = new Map($b);
         $this->assertEquals($expected, $map1->merge($map2)->getMapData());
@@ -64,7 +69,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider intersectProvider
      */
-    public function testIntersect($a, $b, $expected) {
+    public function testIntersect($a, $b, $expected)
+    {
         $map1 = new Map($a);
         $map2 = new Map($b);
         $this->assertEquals($expected, $map1->intersect($map2)->getMapData());
@@ -73,7 +79,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider addProvider
      */
-    public function testAdd($a, $b, $expected) {
+    public function testAdd($a, $b, $expected)
+    {
         $map1 = new Map($a);
         $map2 = new Map($b);
         $this->assertEquals($expected, $map1->add($map2)->getMapData());
@@ -82,7 +89,8 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider addProvider
      */
-    public function testVarExport($a, $b, $expected) {
+    public function testVarExport($a, $b, $expected)
+    {
         $map1 = new Map($a);
         $map2 = new Map($b);
 
@@ -97,217 +105,223 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($map_eval_1->enabled('a', 1));
     }
 
-    public function parseProvider() {
+    public function parseProvider()
+    {
         return [
             [
-                [ 'a' => [1] ],
-                [ 'a' => Bucket::FIRST ]
+                ['a' => [1]],
+                ['a' => Bucket::FIRST],
             ],
             [
-                [ 'a' => [1, 2] ],
-                [ 'a' => Bucket::FIRST | Bucket::SECOND ]
+                ['a' => [1, 2]],
+                ['a' => Bucket::FIRST | Bucket::SECOND],
             ],
             [
-                [ 'a' => [6, 7], 'a.b' => [7] ],
-                [ 'a' => Bucket::SIXTH | Bucket::SEVENTH, 'a.b' => Bucket::SEVENTH ]
+                ['a' => [6, 7], 'a.b' => [7]],
+                ['a' => Bucket::SIXTH | Bucket::SEVENTH, 'a.b' => Bucket::SEVENTH],
             ],
             [
-                [ 'a' => Bucket::FIRST ],
-                [ 'a' => Bucket::FIRST ]
-            ]
+                ['a' => Bucket::FIRST],
+                ['a' => Bucket::FIRST],
+            ],
         ];
     }
 
-    public function enabledProvider() {
+    public function enabledProvider()
+    {
         return [
             [
                 'assertTrue', 'Test.version.a', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
-                    'Test.version.a' => [1]
-                ]
+                    'Test.version.a' => [1],
+                ],
             ],
             [
                 'assertTrue', 'Test.version', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
-                    'Test.version.a' => [1]
-                ]
+                    'Test.version.a' => [1],
+                ],
             ],
             [
                 'assertTrue', 'Test', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
-                    'Test.version.a' => [1]
-                ]
+                    'Test.version.a' => [1],
+                ],
             ],
             [
                 'assertTrue', 'Test.version', 1, [
                     'Test' => [1],
                     'Test.version' => [1],
-                    'Test.version.a' => []
-                ]
+                    'Test.version.a' => [],
+                ],
             ],
             [
                 'assertFalse', 'Test.version.a', 1, [
                     'Test' => [],
                     'Test.version' => [1],
-                    'Test.version.a' => [1]
-                ]
+                    'Test.version.a' => [1],
+                ],
             ],
             [
                 'assertFalse', 'Test.version.a', 1, [
                     'Test' => [1],
                     'Test.version' => [],
-                    'Test.version.a' => [1]
-                ]
+                    'Test.version.a' => [1],
+                ],
             ],
             [
                 'assertFalse', 'Test.version.b', 1, [
                     'Test' => [],
                     'Test.version' => [],
-                    'Test.version.a' => []
-                ]
+                    'Test.version.a' => [],
+                ],
             ],
             [
                 'assertTrue', 'Test.version.a', 3, [
                     'Test' => [2, 3, 5],
                     'Test.version' => [2, 3],
-                    'Test.version.a' => [3]
-                ]
+                    'Test.version.a' => [3],
+                ],
             ],
         ];
     }
 
-    public function diffProvider() {
+    public function diffProvider()
+    {
         return [
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                []
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                [],
             ],
             [
-                [ 'a' => [1,2], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD ]
+                ['a' => [1, 2], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'c' => [7] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'c' => Bucket::SEVENTH ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'c' => [7]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['c' => Bucket::SEVENTH],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'd' => [1] ],
-                [ 'd' => Bucket::FIRST ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'd' => [1]],
+                ['d' => Bucket::FIRST],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'c' => [7] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'd' => [1] ],
-                [ 'd' => Bucket::FIRST, 'c' => Bucket::SEVENTH ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'c' => [7]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'd' => [1]],
+                ['d' => Bucket::FIRST, 'c' => Bucket::SEVENTH],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [], 'b' => [] ],
-                [ 'a' => 0, 'b' => 0 ]
-            ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [], 'b' => []],
+                ['a' => 0, 'b' => 0],
+            ],
         ];
     }
 
-    public function intersectProvider() {
+    public function intersectProvider()
+    {
         return [
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD,
-                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH
-                ]
+                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
+                ],
             ],
             [
-                [ 'a' => [1,2], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH ]
+                ['a' => [1, 2], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'c' => [7] ],
-                [ 'a' => [2,3,4], 'b' => [4,5,6] ],
-                [ 'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'c' => [7]],
+                ['a' => [2, 3, 4], 'b' => [4, 5, 6]],
+                ['b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [9,8,7], 'd' => [1] ],
-                [ 'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD ]
-            ]
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [9, 8, 7], 'd' => [1]],
+                ['a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD],
+            ],
         ];
     }
 
-    public function mergeProvider() {
+    public function mergeProvider()
+    {
         return [
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD,
-                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH
-                ]
+                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
+                ],
             ],
             [
-                [ 'a' => [1,2], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
+                ['a' => [1, 2], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD,
-                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH
-                ]
+                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
+                ],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'c' => [7] ],
-                [ 'a' => [2,3,4], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'c' => [7]],
+                ['a' => [2, 3, 4], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::SECOND | Bucket::THIRD | Bucket::FOURTH,
                     'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
-                    'c' => Bucket::SEVENTH
-                ]
+                    'c' => Bucket::SEVENTH,
+                ],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [9,8,7], 'd' => [1] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [9, 8, 7], 'd' => [1]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD,
                     'b' => Bucket::NINTH | Bucket::EIGHTH | Bucket::SEVENTH,
-                    'd' => Bucket::FIRST
-                ]
-            ]
+                    'd' => Bucket::FIRST,
+                ],
+            ],
         ];
     }
 
-    public function addProvider() {
+    public function addProvider()
+    {
         return [
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD,
-                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH
-                ]
+                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
+                ],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6] ],
-                [ 'a' => [3,4,5], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6]],
+                ['a' => [3, 4, 5], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD | Bucket::FOURTH | Bucket::FIFTH,
-                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH
-                ]
+                    'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
+                ],
             ],
             [
-                [ 'a' => [1,2,3], 'b' => [4,5,6], 'c' => [7] ],
-                [ 'a' => [2,3,4], 'b' => [4,5,6] ],
+                ['a' => [1, 2, 3], 'b' => [4, 5, 6], 'c' => [7]],
+                ['a' => [2, 3, 4], 'b' => [4, 5, 6]],
                 [
                     'a' => Bucket::FIRST | Bucket::SECOND | Bucket::THIRD | Bucket::FOURTH,
                     'b' => Bucket::FOURTH | Bucket::FIFTH | Bucket::SIXTH,
-                    'c' => Bucket::SEVENTH
-                ]
-            ]
+                    'c' => Bucket::SEVENTH,
+                ],
+            ],
         ];
     }
 }

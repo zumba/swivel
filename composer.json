@@ -20,7 +20,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*",
-        "zumba/zumba-coding-standards": "~1.0",
         "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {

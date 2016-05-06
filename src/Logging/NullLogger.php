@@ -2,10 +2,10 @@
 
 namespace Zumba\Swivel\Logging;
 
-use \Psr\Log\NullLogger as PsrNullLogger;
+use Psr\Log\NullLogger as PsrNullLogger;
 
 /**
- * This Logger can be used to avoid conditional log calls
+ * This Logger can be used to avoid conditional log calls.
  *
  * Logging should always be optional, and if no logger is provided to your
  * library creating a NullLogger instance to have something to throw logs at
@@ -17,10 +17,10 @@ use \Psr\Log\NullLogger as PsrNullLogger;
  * Any logger you implement will need to return a PSR compliant logger instance 
  * In the __set_state() function for var_export() to work as expected.
  */
-class NullLogger extends PsrNullLogger {
-
+class NullLogger extends PsrNullLogger
+{
     /**
-     * Set_state
+     * Set_state.
      *
      * Support reloading class instance via var_export generated code
      * 
@@ -31,9 +31,11 @@ class NullLogger extends PsrNullLogger {
      * The NullLogger interface returns null, so we do that here.
      * 
      * @param array $objData Array of logger data needed to reconsturct logger class
-     * @return string           Implementaiton of logger class to be passed to the Map class
+     *
+     * @return string Implementaiton of logger class to be passed to the Map class
      */
-    public static function __set_state($objData = array()) {
+    public static function __set_state($objData = array())
+    {
         return new static();
     }
 }
