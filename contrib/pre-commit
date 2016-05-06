@@ -15,7 +15,7 @@ SFILES=${SFILES:-$FILES}
 if [ "$FILES" != "" ]
 then
     echo "Running PHPCS"
-    ./vendor/bin/phpcs --standard=phpcs.xml $SFILES
+    ./vendor/bin/phpcs --standard=PSR2 $SFILES
     if [ $? != 0 ]
     then
         echo "PHPCS Errors found; commit aborted."

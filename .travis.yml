@@ -3,15 +3,16 @@ php:
   - 5.4
   - 5.5
   - 5.6
-  - hhvm
   - 7.0
+  - hhvm
 
 before_script:
-  - composer install --dev
+  - if [ $TRAVIS_PHP_VERSION = '7.0' ]; then composer require satooshi/php-coveralls; fi
+  - composer install
 
 script:
-  - ./vendor/bin/phpunit --coverage-text
+  - if [ $TRAVIS_PHP_VERSION = '7.0' ]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; else vendor/bin/phpunit; fi
   - ./vendor/bin/phpcs --standard=PSR2 src
 
-after_script:
-  - php vendor/bin/coveralls -v
+after_success:
+  - if [ $TRAVIS_PHP_VERSION = '7.0' ]; then php vendor/bin/coveralls; fi
