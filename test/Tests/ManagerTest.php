@@ -57,7 +57,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->will($this->returnValue('abc'));
 
-        $this->assertEquals('abc', $manager->invoke('Test.version.a', function () { return 'abc'; }));
+        $this->assertEquals('abc', $manager->invoke('Test.version.a', function () {
+            return 'abc';
+
+        }));
     }
 
     public function testInvokeOneParamDisabled()
@@ -91,7 +94,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('execute');
 
-        $this->assertEquals(null, $manager->invoke('Test.version.a', function () { return 'abc'; }));
+        $this->assertEquals(null, $manager->invoke('Test.version.a', function () {
+            return 'abc';
+
+        }));
     }
 
     public function testInvokeTwoParamEnabled()
@@ -128,8 +134,12 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('abc', $manager->invoke(
             'Test.version.a',
-            function () { return 'abc'; },
-            function () { return 'default'; }
+            function () {
+                return 'abc';
+            },
+            function () {
+                return 'default';
+            }
         ));
     }
 
@@ -167,8 +177,12 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('default', $manager->invoke(
             'Test.version.a',
-            function () { return 'abc'; },
-            function () { return 'default'; }
+            function () {
+                return 'abc';
+            },
+            function () {
+                return 'default';
+            }
         ));
     }
 

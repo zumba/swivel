@@ -160,7 +160,10 @@ class Builder implements BuilderInterface
             throw $exception;
         }
         if (!$this->behavior) {
-            $callable = function () use ($value) { return $value; };
+            $callable = function () use ($value) {
+                return $value;
+
+            };
             $this->setBehavior($this->getBehavior($callable));
         }
 
@@ -174,7 +177,10 @@ class Builder implements BuilderInterface
      */
     public function execute()
     {
-        $behavior = $this->behavior ?: $this->getBehavior(function () { return; });
+        $behavior = $this->behavior ?: $this->getBehavior(function () {
+            return;
+
+        });
         $behaviorSlug = $behavior->getSlug();
 
         $this->metrics && $this->startMetrics($behaviorSlug);

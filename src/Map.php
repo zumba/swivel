@@ -85,7 +85,7 @@ class Map implements MapInterface
      * SetState.
      *
      * Support reloading class via var_export definition.
-     * 
+     *
      * @param array $mapData Array of logger data needed to reconsturct logger
      *
      * @return string Implementaiton of logger class to be passed to the Map class

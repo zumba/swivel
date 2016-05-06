@@ -21,7 +21,8 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase
     public function testExecuteWithLogger()
     {
         $logger = $this->getMock('Psr\Log\NullLogger');
-        $behavior = new Behavior('a', function () {});
+        $behavior = new Behavior('a', function () {
+        });
         $behavior->setLogger($logger);
 
         $logger->expects($this->once())

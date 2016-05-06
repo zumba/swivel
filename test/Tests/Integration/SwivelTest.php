@@ -32,8 +32,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, 4));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
-            ->defaultBehavior(function () { return 'OldAndBusted'; })
+            ->addBehavior('NewAlgorithm', function () {
+                return 'NewHotness';
+            })
+            ->defaultBehavior(function () {
+                return 'OldAndBusted';
+            })
             ->execute();
 
         $this->assertSame('NewHotness', $result);
@@ -43,8 +47,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, 9));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
-            ->defaultBehavior(function () { return 'OldAndBusted'; })
+            ->addBehavior('NewAlgorithm', function () {
+                return 'NewHotness';
+            })
+            ->defaultBehavior(function () {
+                return 'OldAndBusted';
+            })
             ->execute();
 
         $this->assertSame('OldAndBusted', $result);
@@ -68,8 +76,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('OldFeature')
-            ->addBehavior('Legacy', function () { return 'AlwaysOn'; })
-            ->defaultBehavior(function () { return 'NeverOn'; })
+            ->addBehavior('Legacy', function () {
+                return 'AlwaysOn';
+            })
+            ->defaultBehavior(function () {
+                return 'NeverOn';
+            })
             ->execute();
 
         $this->assertSame('AlwaysOn', $result);
@@ -82,8 +94,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('BadIdea')
-            ->addBehavior('Implementation', function () { return 'IsOn?'; })
-            ->defaultBehavior(function () { return 'NeverOn'; })
+            ->addBehavior('Implementation', function () {
+                return 'IsOn?';
+            })
+            ->defaultBehavior(function () {
+                return 'NeverOn';
+            })
             ->execute();
 
         $this->assertSame('NeverOn', $result);
@@ -93,8 +109,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->forFeature('ParentOff')
-            ->addBehavior('ChildOn', function () { return 'NeverWorks'; })
-            ->defaultBehavior(function () { return 'AlwaysDefault'; })
+            ->addBehavior('ChildOn', function () {
+                return 'NeverWorks';
+            })
+            ->defaultBehavior(function () {
+                return 'AlwaysDefault';
+            })
             ->execute();
 
         $this->assertSame('AlwaysDefault', $result);
@@ -105,8 +125,14 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
      */
     public function testBranchingChildren($bucket, $assertOne, $assertTwo, $assertThree, $assertFour)
     {
-        $on = function () { return true; };
-        $off = function () { return false; };
+        $on = function () {
+            return true;
+
+        };
+        $off = function () {
+            return false;
+
+        };
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('NewFeature')
             ->addBehavior('SimpleStuff', $on)
@@ -142,8 +168,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function () { return 'NewHotness'; },
-            function () { return 'OldAndBusted'; }
+            function () {
+                return 'NewHotness';
+            },
+            function () {
+                return 'OldAndBusted';
+            }
         );
         $this->assertSame('NewHotness', $result);
     }
@@ -153,8 +183,12 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
         $swivel = new Manager(new Config($this->map, 10));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function () { return 'NewHotness'; },
-            function () { return 'OldAndBusted'; }
+            function () {
+                return 'NewHotness';
+            },
+            function () {
+                return 'OldAndBusted';
+            }
         );
         $this->assertSame('OldAndBusted', $result);
     }
@@ -162,14 +196,20 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     public function testInvokeSystemNewAlgorithmValidBucketNoDefault()
     {
         $swivel = new Manager(new Config($this->map, 1));
-        $result = $swivel->invoke('System.NewAlgorithm', function () { return 'NewHotness'; });
+        $result = $swivel->invoke('System.NewAlgorithm', function () {
+            return 'NewHotness';
+
+        });
         $this->assertSame('NewHotness', $result);
     }
 
     public function testInvokeSystemNewAlgorithmInvalidBucketNoDefault()
     {
         $swivel = new Manager(new Config($this->map, 10));
-        $result = $swivel->invoke('System.NewAlgorithm', function () { return 'NewHotness'; });
+        $result = $swivel->invoke('System.NewAlgorithm', function () {
+            return 'NewHotness';
+
+        });
         $this->assertSame(null, $result);
     }
 
@@ -177,7 +217,9 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, 2));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
+            ->addBehavior('NewAlgorithm', function () {
+                return 'NewHotness';
+            })
             ->noDefault()
             ->execute();
 
@@ -188,7 +230,9 @@ class SwivelTest extends \PHPUnit_Framework_TestCase
     {
         $swivel = new Manager(new Config($this->map, 8));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () { return 'NewHotness'; })
+            ->addBehavior('NewAlgorithm', function () {
+                return 'NewHotness';
+            })
             ->noDefault()
             ->execute();
 

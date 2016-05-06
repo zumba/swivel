@@ -65,7 +65,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior'], ['Test', $bucket]);
-        $strategy = function () {};
+        $strategy = function () {
+        };
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], ['a', $strategy]);
 
         $builder
@@ -88,7 +89,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', ['enabled'], [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior', 'setBehavior'], ['Test', $bucket]);
-        $strategy = function () {};
+        $strategy = function () {
+        };
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], ['a', $strategy]);
 
         $builder
@@ -118,7 +120,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior'], ['Test', $bucket]);
         $value = null;
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], [
-            'a', function () use ($value) { return $value; },
+            'a', function () use ($value) {
+                return $value;
+            },
         ]);
 
         $builder
@@ -143,7 +147,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior', 'setBehavior'], ['Test', $bucket]);
         $value = null;
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], [
-            'a', function () use ($value) { return $value; },
+            'a', function () use ($value) {
+                return $value;
+            },
         ]);
 
         $builder
@@ -171,7 +177,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior'], ['Test', $bucket]);
-        $strategy = function () {};
+        $strategy = function () {
+        };
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], [Builder::DEFAULT_SLUG, $strategy]);
 
         $builder
@@ -192,7 +199,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $value = null;
         $behavior = $this->getMock('Zumba\Swivel\Behavior', [], [
             Builder::DEFAULT_SLUG,
-            function () use ($value) { return $value; },
+            function () use ($value) {
+                return $value;
+            },
         ]);
 
         $builder
@@ -215,7 +224,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new Builder('Test', $bucket);
         $builder->setLogger(new NullLogger());
         $builder->noDefault();
-        $builder->defaultBehavior(function () {});
+        $builder->defaultBehavior(function () {
+        });
     }
 
     /**
@@ -239,7 +249,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = $this->getMock('Zumba\Swivel\Builder', ['getBehavior'], ['Test', $bucket]);
-        $strategy = function () {};
+        $strategy = function () {
+        };
         $behavior = $this->getMock('Zumba\Swivel\Behavior', ['getSlug'], [Builder::DEFAULT_SLUG, $strategy]);
 
         $builder
@@ -268,7 +279,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $value = 'test';
         $behavior = $this->getMock('Zumba\Swivel\Behavior', ['getSlug'], [
             Builder::DEFAULT_SLUG,
-            function () use ($value) { return $value; },
+            function () use ($value) {
+                return $value;
+            },
         ]);
 
         $builder
@@ -293,7 +306,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Zumba\Swivel\Builder', null, ['Test', $bucket]);
         $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
         $builder->setLogger(new NullLogger());
-        $builder->defaultBehavior(function () { return 'abc'; });
+        $builder->defaultBehavior(function () {
+            return 'abc';
+
+        });
         $this->assertSame('abc', $builder->execute());
     }
 
@@ -302,7 +318,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $builder = new Builder('Test', $bucket);
-        $strategy = function () {};
+        $strategy = function () {
+        };
 
         $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
         $builder->setLogger(new NullLogger());
@@ -324,8 +341,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
-        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
-            'Test that the protected method is able to be called');
+        $this->assertEquals(
+            'ArgaArgb',
+            $behavior->execute(['Arga', 'Argb']),
+            'Test that the protected method is able to be called'
+        );
     }
 
     public function testGetBehaviorPrivateMethod()
@@ -341,8 +361,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
-        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
-            'Test that the private method is able to be called');
+        $this->assertEquals(
+            'ArgaArgb',
+            $behavior->execute(['Arga', 'Argb']),
+            'Test that the private method is able to be called'
+        );
     }
 
     public function testGetBehaviorProtectedStaticMethod()
@@ -358,8 +381,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
-        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
-            'Test that the protected static method is able to be called');
+        $this->assertEquals(
+            'ArgaArgb',
+            $behavior->execute(['Arga', 'Argb']),
+            'Test that the protected static method is able to be called'
+        );
     }
 
     public function testGetBehaviorPrivateStaticMethod()
@@ -375,8 +401,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
-        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']),
-            'Test that the private static method is able to be called');
+        $this->assertEquals(
+            'ArgaArgb',
+            $behavior->execute(['Arga', 'Argb']),
+            'Test that the private static method is able to be called'
+        );
     }
 
     /**

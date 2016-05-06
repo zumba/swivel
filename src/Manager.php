@@ -77,7 +77,9 @@ class Manager implements ManagerInterface
 
         return $this->forFeature($feature)
             ->addBehavior(implode(Map::DELIMITER, $parts), $a)
-            ->defaultBehavior($b ? $b : function () use ($b) { return $b; })
+            ->defaultBehavior($b ? $b : function () use ($b) {
+                return $b;
+            })
             ->execute();
     }
 
