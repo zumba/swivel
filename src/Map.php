@@ -1,24 +1,25 @@
 <?php
+
 namespace Zumba\Swivel;
 
-use \Psr\Log\LoggerInterface,
-    \Zumba\Swivel\Logging\NullLogger;
+use Psr\Log\LoggerInterface;
+use Zumba\Swivel\Logging\NullLogger;
 
-class Map implements MapInterface {
-
+class Map implements MapInterface
+{
     use \Psr\Log\LoggerAwareTrait;
 
     const DELIMITER = '.';
 
     /**
-     * Map of parsed features
+     * Map of parsed features.
      *
      * @var array
      */
     protected $map;
 
     /**
-     * Zumba\Swivel\Map
+     * Zumba\Swivel\Map.
      *
      * Example of $map param:
      * [
@@ -27,10 +28,11 @@ class Map implements MapInterface {
      *   'FeatureA.Behavior2' => [4, 5, 6],
      * ]
      *
-     * @param array $map
+     * @param array                    $map
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(array $map = [], LoggerInterface $logger = null) {
+    public function __construct(array $map = [], LoggerInterface $logger = null)
+    {
         $this->setLogger($logger ?: new NullLogger());
         $this->map = $this->parse($map);
     }
@@ -47,8 +49,6 @@ class Map implements MapInterface {
 
     /**
      * Ensure a null logger is in place post unserilization so there's no issues.
-     *
-     * @return void
      */
     public function __wakeup()
     {
@@ -56,37 +56,44 @@ class Map implements MapInterface {
     }
 
     /**
-     * Merge this map with another map and return a new MapInterface
+     * Merge this map with another map and return a new MapInterface.
      *
      * Values in $map will be added to values in this instance.  Any number of additional maps may
      * be passed to this method, i.e. $map->merge($map2, $map3, $map4, ...);
      *
      * @param MapInterface $map
+     *
      * @return MapInterface
      */
-    public function add(MapInterface $map) {
-        $combine = function($data, $map) {
+    public function add(MapInterface $map)
+    {
+        $combine = function ($data, $map) {
             foreach ($map as $key => $mask) {
                 $data[$key] = empty($data[$key]) ? $mask : ($data[$key] | $mask);
             }
+
             return $data;
         };
 
         $maps = array_slice(func_get_args(), 1);
         $data = array_reduce($maps, $combine, $combine($this->map, $map->getMapData()));
-        return new Map($data, $this->logger);
+
+        return new self($data, $this->logger);
     }
 
     /**
-     * SetState 
+     * SetState.
      *
      * Support reloading class via var_export definition.
-     * 
+     *
      * @param array $mapData Array of logger data needed to reconsturct logger
-     * @return string        Implementaiton of logger class to be passed to the Map class
+     *
+     * @return string Implementaiton of logger class to be passed to the Map class
      */
-    public static function __set_state($mapData) {
+    public static function __set_state($mapData)
+    {
         $map = new static($mapData['map'], $mapData['logger']);
+
         return $map;
     }
 
@@ -100,37 +107,45 @@ class Map implements MapInterface {
      * If this map has a logger, it will be passed to the new map.
      *
      * @param MapInterface $map
+     *
      * @return MapInterface
      */
-    public function diff(MapInterface $map) {
+    public function diff(MapInterface $map)
+    {
         $otherMapData = $map->getMapData();
         $data = array_merge(
             array_diff_assoc($this->map, $otherMapData),
             array_diff_assoc($otherMapData, $this->map)
         );
-        return new Map($data);
+
+        return new self($data);
     }
 
     /**
-     * Check if a feature slug is enabled for a particular bucket index
+     * Check if a feature slug is enabled for a particular bucket index.
      *
      * @param string $slug
-     * @param integer $index
-     * @return boolean
+     * @param int    $index
+     *
+     * @return bool
+     *
      * @see \Zumba\Swivel\MapInterface
      */
-    public function enabled($slug, $index) {
+    public function enabled($slug, $index)
+    {
         $map = $this->map;
         $key = '';
         $index = 1 << ($index - 1);
         foreach (explode(static::DELIMITER, $slug) as $child) {
-            $key = empty($key) ? $child : $key . static::DELIMITER . $child;
+            $key = empty($key) ? $child : $key.static::DELIMITER.$child;
             if (!isset($map[$key]) || !($map[$key] & $index)) {
-                $this->logger->debug('Swivel - "' . $slug . '" is not enabled for bucket ' . $index);
+                $this->logger->debug('Swivel - "'.$slug.'" is not enabled for bucket '.$index);
+
                 return false;
             }
         }
-        $this->logger->debug('Swivel - "' . $slug . '" is enabled for bucket ' . $index);
+        $this->logger->debug('Swivel - "'.$slug.'" is enabled for bucket '.$index);
+
         return true;
     }
 
@@ -139,7 +154,8 @@ class Map implements MapInterface {
      *
      * @return array
      */
-    public function getMapData() {
+    public function getMapData()
+    {
         return $this->map;
     }
 
@@ -150,25 +166,30 @@ class Map implements MapInterface {
      * has a logger, it will be passed to the new map.
      *
      * @param MapInterface $map
+     *
      * @return MapInterface
      */
-    public function intersect(MapInterface $map) {
-        return new Map(array_intersect_assoc($this->map, $map->getMapData()), $this->logger);
+    public function intersect(MapInterface $map)
+    {
+        return new self(array_intersect_assoc($this->map, $map->getMapData()), $this->logger);
     }
 
     /**
-     * Merge this map with another map and return a new MapInterface
+     * Merge this map with another map and return a new MapInterface.
      *
      * Values in $map will overwrite values in this instance.  Any number of additional maps may
      * be passed to this method, i.e. $map->merge($map2, $map3, $map4, ...);
      *
      * @param MapInterface $map
+     *
      * @return MapInterface
      */
-    public function merge(MapInterface $map) {
+    public function merge(MapInterface $map)
+    {
         $maps = array_slice(func_get_args(), 1);
         $data = array_reduce($maps, 'array_merge', array_merge($this->map, $map->getMapData()));
-        return new Map($data, $this->logger);
+
+        return new self($data, $this->logger);
     }
 
     /**
@@ -177,23 +198,29 @@ class Map implements MapInterface {
      * Otherwise, this method will just return $list.
      *
      * @param mixed $list
-     * @return integer bitmask
+     *
+     * @return int bitmask
      */
-    protected function reduceToBitmask($list) {
+    protected function reduceToBitmask($list)
+    {
         $this->logger->debug('Swivel - reducing to bitmask.', compact('list'));
-        return !is_array($list) ? $list : array_reduce($list, function($mask, $index) {
+
+        return !is_array($list) ? $list : array_reduce($list, function ($mask, $index) {
             return $mask | (1 << ($index - 1));
         });
     }
 
     /**
-     * Parse a human readable map into a map of bitmasks
+     * Parse a human readable map into a map of bitmasks.
      *
      * @param array $map
+     *
      * @return array
      */
-    public function parse(array $map) {
+    public function parse(array $map)
+    {
         $this->logger->info('Swivel - Parsing feature map.', compact('map'));
+
         return array_combine(array_keys($map), array_map([$this, 'reduceToBitmask'], $map));
     }
 }

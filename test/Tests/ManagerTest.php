@@ -1,14 +1,14 @@
 <?php
+
 namespace Tests;
 
-use \Zumba\Swivel\Bucket;
-use \Zumba\Swivel\Builder;
-use \Zumba\Swivel\Manager;
-use \Zumba\Swivel\Config;
-use Zumba\Swivel\MetricsInterface;
+use Zumba\Swivel\Manager;
+use Zumba\Swivel\Config;
 
-class ManagerTest extends \PHPUnit_Framework_TestCase {
-    public function testForFeature() {
+class ManagerTest extends \PHPUnit_Framework_TestCase
+{
+    public function testForFeature()
+    {
         $manager = new Manager(new Config());
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
@@ -17,14 +17,16 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zumba\Swivel\Builder', $manager->forFeature('Test'));
     }
 
-    public function testSetBucketReturnsManager() {
+    public function testSetBucketReturnsManager()
+    {
         $manager = new Manager(new Config());
         $map = $this->getMock('Zumba\Swivel\Map');
         $bucket = $this->getMock('Zumba\Swivel\Bucket', null, [$map]);
         $this->assertInstanceOf('Zumba\Swivel\Manager', $manager->setBucket($bucket));
     }
 
-    public function testInvokeOneParamEnabled() {
+    public function testInvokeOneParamEnabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -55,10 +57,14 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
             ->method('execute')
             ->will($this->returnValue('abc'));
 
-        $this->assertEquals('abc', $manager->invoke('Test.version.a', function() { return 'abc'; }));
+        $this->assertEquals('abc', $manager->invoke('Test.version.a', function () {
+            return 'abc';
+
+        }));
     }
 
-    public function testInvokeOneParamDisabled() {
+    public function testInvokeOneParamDisabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -88,10 +94,14 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('execute');
 
-        $this->assertEquals(null, $manager->invoke('Test.version.a', function() { return 'abc'; }));
+        $this->assertEquals(null, $manager->invoke('Test.version.a', function () {
+            return 'abc';
+
+        }));
     }
 
-    public function testInvokeTwoParamEnabled() {
+    public function testInvokeTwoParamEnabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -124,12 +134,17 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('abc', $manager->invoke(
             'Test.version.a',
-            function() { return 'abc'; },
-            function() { return 'default'; }
+            function () {
+                return 'abc';
+            },
+            function () {
+                return 'default';
+            }
         ));
     }
 
-    public function testInvokeTwoParamDisabled() {
+    public function testInvokeTwoParamDisabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -162,12 +177,17 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('default', $manager->invoke(
             'Test.version.a',
-            function() { return 'abc'; },
-            function() { return 'default'; }
+            function () {
+                return 'abc';
+            },
+            function () {
+                return 'default';
+            }
         ));
     }
 
-    public function testSetMetrics() {
+    public function testSetMetrics()
+    {
         $config = $this->getMock('Zumba\Swivel\Config', ['getMetrics']);
         $metricsInstance = $this->getMock('Zumba\Swivel\MetricsInterface');
 
@@ -183,7 +203,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($metricsInstance, $metrics->getValue($manager));
     }
 
-    public function testReturnValueOneParamEnabled() {
+    public function testReturnValueOneParamEnabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -217,7 +238,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('abc', $manager->returnValue('Test.version.a', 'abc'));
     }
 
-    public function testReturnValueOneParamDisabled() {
+    public function testReturnValueOneParamDisabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -250,7 +272,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(null, $manager->returnValue('Test.version.a', 'abc'));
     }
 
-    public function testReturnValueTwoParamEnabled() {
+    public function testReturnValueTwoParamEnabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this
@@ -284,7 +307,8 @@ class ManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('abc', $manager->returnValue('Test.version.a', 'abc', 'default'));
     }
 
-    public function testReturnValueTwoParamDisabled() {
+    public function testReturnValueTwoParamDisabled()
+    {
         $config = new Config();
         $manager = $this->getMock('Zumba\Swivel\Manager', ['forFeature'], [$config]);
         $builder = $this

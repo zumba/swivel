@@ -1,42 +1,41 @@
 <?php
+
 namespace Zumba\Swivel;
 
-interface ConfigInterface extends \Psr\Log\LoggerAwareInterface {
-
+interface ConfigInterface extends \Psr\Log\LoggerAwareInterface
+{
     /**
-     * Get a configured Bucket instance
+     * Get a configured Bucket instance.
      *
      * @return \Zumba\Swivel\Bucket
      */
     public function getBucket();
 
     /**
-     * Get the PSR3 logger
+     * Get the PSR3 logger.
      *
      * @return \Psr\Log\LoggerInterface
      */
     public function getLogger();
 
     /**
-     * Get the Metrics object
+     * Get the Metrics object.
      *
      * @return \Zumba\Swivel\MetricsInterface
      */
     public function getMetrics();
 
     /**
-     * Set the bucket index for the user
+     * Set the bucket index for the user.
      *
-     * @param integer $index
-     * @return void
+     * @param int $index
      */
     public function setBucketIndex($index);
 
     /**
-     * Set the Metrics object
+     * Set the Metrics object.
      *
      * @param MetricsInterface $metrics
-     * @return void
      */
     public function setMetrics(MetricsInterface $metrics);
 }

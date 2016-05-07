@@ -2,8 +2,8 @@
 
 namespace Zumba\Swivel;
 
-class Manager implements ManagerInterface {
-
+class Manager implements ManagerInterface
+{
     use \Psr\Log\LoggerAwareTrait;
 
     /**
@@ -14,18 +14,19 @@ class Manager implements ManagerInterface {
     protected $bucket;
 
     /**
-     * A metrics object
+     * A metrics object.
      *
      * @var \Zumba\Swivel\MetricsInterface
      */
     protected $metrics;
 
     /**
-     * Zumba\Swivel\Manager
+     * Zumba\Swivel\Manager.
      *
      * @param ConfigInterface $config
      */
-    public function __construct(ConfigInterface $config) {
+    public function __construct(ConfigInterface $config)
+    {
         $this->setLogger($config->getLogger());
         $this->setBucket($config->getBucket());
 
@@ -37,14 +38,17 @@ class Manager implements ManagerInterface {
     }
 
     /**
-     * Create a new Builder instance
+     * Create a new Builder instance.
      *
      * @param string $slug
+     *
      * @return \Zumba\Swivel\Builder
+     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function forFeature($slug) {
-        $this->logger->debug('Swivel - Generating builder for feature "' . $slug . '"');
+    public function forFeature($slug)
+    {
+        $this->logger->debug('Swivel - Generating builder for feature "'.$slug.'"');
         $builder = new Builder($slug, $this->bucket);
         $builder->setLogger($this->logger);
 
@@ -54,39 +58,49 @@ class Manager implements ManagerInterface {
     }
 
     /**
-     * Syntactic sugar for creating simple feature toggles (ternary style)
+     * Syntactic sugar for creating simple feature toggles (ternary style).
      *
      * Uses Builder::addBehavior
      *
-     * @param string $slug
+     * @param string   $slug
      * @param callable $a
      * @param callable $b
+     *
      * @return mixed
+     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function invoke($slug, $a, $b = null) {
+    public function invoke($slug, $a, $b = null)
+    {
         $parts = explode(Map::DELIMITER, $slug);
         $feature = array_shift($parts);
+
         return $this->forFeature($feature)
             ->addBehavior(implode(Map::DELIMITER, $parts), $a)
-            ->defaultBehavior($b ? $b : function () use ($b) { return $b; })
+            ->defaultBehavior($b ? $b : function () use ($b) {
+                return $b;
+            })
             ->execute();
     }
 
     /**
-     * Syntactic sugar for creating simple feature toggles (ternary style)
+     * Syntactic sugar for creating simple feature toggles (ternary style).
      *
      * Uses Builder::addValue
      *
      * @param string $slug
-     * @param mixed $a
-     * @param mixed $b
+     * @param mixed  $a
+     * @param mixed  $b
+     *
      * @return mixed
+     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function returnValue($slug, $a, $b = null) {
+    public function returnValue($slug, $a, $b = null)
+    {
         $parts = explode(Map::DELIMITER, $slug);
         $feature = array_shift($parts);
+
         return $this->forFeature($feature)
             ->addValue(implode(Map::DELIMITER, $parts), $a)
             ->defaultValue($b)
@@ -94,27 +108,31 @@ class Manager implements ManagerInterface {
     }
 
     /**
-     * Set the Swivel Bucket
+     * Set the Swivel Bucket.
      *
      * @param \Zumba\Swivel\BucketInterface $bucket
+     *
      * @return \Zumba\Swivel\ManagerInterface
+     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function setBucket(BucketInterface $bucket = null) {
+    public function setBucket(BucketInterface $bucket = null)
+    {
         if ($bucket) {
             $this->bucket = $bucket;
             $this->logger->debug('Swivel - User bucket set.', compact('bucket'));
         }
+
         return $this;
     }
 
     /**
-     * Set a metrics object
+     * Set a metrics object.
      *
      * @param MetricsInterface $metrics
-     * @return void
      */
-    protected function setMetrics(MetricsInterface $metrics) {
+    protected function setMetrics(MetricsInterface $metrics)
+    {
         $this->metrics = $metrics;
     }
 }
