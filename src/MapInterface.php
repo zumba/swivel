@@ -78,4 +78,6 @@ interface MapInterface extends \Psr\Log\LoggerAwareInterface
      * @return array
      */
     public function parse(array $map);
+
+    public function setCallback(callable $callback);
 }

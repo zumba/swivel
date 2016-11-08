@@ -36,11 +36,18 @@ class Config implements ConfigInterface
      * @param mixed                         $map
      * @param int|null                      $index
      * @param \Psr\Log\LoggerInterface|null $logger
+     * @param callable|null                 $callback
      */
-    public function __construct($map = [], $index = null, LoggerInterface $logger = null)
+    public function __construct($map = [], $index = null, LoggerInterface $logger = null, callable $callback = null)
     {
         $this->setLogger($logger ?: $this->getLogger());
         $this->setMap($map);
+
+        if(is_null($callback)){
+            $callback = function(){};
+        }
+
+        $this->map->setCallback($callback);
         $this->index = $index;
     }
 
@@ -114,4 +121,5 @@ class Config implements ConfigInterface
     {
         $this->metrics = $metrics;
     }
+
 }

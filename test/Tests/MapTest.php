@@ -43,7 +43,20 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testEnabled($assertion, $slug, $index, $map)
     {
         $featureMap = new Map($map);
+        $featureMap->setCallback(function (){});
         $this->$assertion($featureMap->enabled($slug, $index));
+    }
+
+    /**
+     * @dataProvider slugProvider 
+     */
+    public function testCallbackReceivedSlug($slug, $index, $map)
+    {
+        $featureMap = new Map($map);
+        $featureMap->setCallback(function ($slug_param) use ($slug){ 
+            $this->assertEquals($slug, $slug_param); 
+        });
+        $featureMap->enabled($slug, $index);
     }
 
     /**
@@ -124,6 +137,19 @@ class MapTest extends \PHPUnit_Framework_TestCase
                 ['a' => Bucket::FIRST],
                 ['a' => Bucket::FIRST],
             ],
+        ];
+    }
+
+    public function slugProvider()
+    {
+        return [
+            [
+                'Test.version.x', 1, [
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1],
+                ],
+            ]
         ];
     }
 
