@@ -148,7 +148,7 @@ class Map implements MapInterface
             $key = empty($key) ? $child : $key.static::DELIMITER.$child;
 
             $is_missing = !isset($map[$key]);
-            $is_disabled = !($map[$key] & $index);
+            $is_disabled = $is_missing ?: !($map[$key] & $index);
 
             if ($is_missing) {
                 call_user_func($this->callback, $slug);
