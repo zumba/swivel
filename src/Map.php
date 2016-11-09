@@ -150,8 +150,8 @@ class Map implements MapInterface
             $is_missing = !isset($map[$key]);
             $is_disabled = !($map[$key] & $index);
 
-            if($is_missing){
-                call_user_func($this->callback,$slug);
+            if ($is_missing) {
+                call_user_func($this->callback, $slug);
             }
 
             if ($is_missing || $is_disabled) {
@@ -241,13 +241,12 @@ class Map implements MapInterface
     }
 
     /**
-     * Sets the callback 
+     * Sets the callback
      *
      * @param callable $callback
      */
     public function setCallback(callable $callback)
     {
-       $this->callback = $callback; 
+        $this->callback = $callback;
     }
-
 }

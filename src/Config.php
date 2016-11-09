@@ -43,8 +43,9 @@ class Config implements ConfigInterface
         $this->setLogger($logger ?: $this->getLogger());
         $this->setMap($map);
 
-        if(is_null($callback)){
-            $callback = function(){};
+        if (is_null($callback)) {
+            $callback = function () {
+            };
         }
 
         $this->map->setCallback($callback);
@@ -121,5 +122,4 @@ class Config implements ConfigInterface
     {
         $this->metrics = $metrics;
     }
-
 }
