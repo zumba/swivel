@@ -19,13 +19,6 @@ class Map implements MapInterface
     protected $map;
 
     /**
-     * Callback for missing behaviour from Map
-     *
-     * @var callable
-     */
-    protected $callback;
-
-    /**
      * Zumba\Swivel\Map.
      *
      * Example of $map param:
@@ -37,7 +30,6 @@ class Map implements MapInterface
      *
      * @param array                    $map
      * @param \Psr\Log\LoggerInterface $logger
-     * @param callable|null            $callback
      */
     public function __construct(array $map = [], LoggerInterface $logger = null)
     {
@@ -147,14 +139,10 @@ class Map implements MapInterface
         foreach (explode(static::DELIMITER, $slug) as $child) {
             $key = empty($key) ? $child : $key.static::DELIMITER.$child;
 
-            $is_missing = !isset($map[$key]);
-            $is_disabled = $is_missing ?: !($map[$key] & $index);
+            $isMissing = !$this->slugExists($key);
+            $isDisabled = $isMissing ?: !($map[$key] & $index);
 
-            if ($is_missing) {
-                call_user_func($this->callback, $slug);
-            }
-
-            if ($is_missing || $is_disabled) {
+            if ($isMissing || $isDisabled) {
                 $this->logger->debug('Swivel - "'.$slug.'" is not enabled for bucket '.$index);
 
                 return false;
@@ -163,6 +151,18 @@ class Map implements MapInterface
         $this->logger->debug('Swivel - "'.$slug.'" is enabled for bucket '.$index);
 
         return true;
+    }
+
+    /**
+     * Check if a feature slug exists in the Map.
+     *
+     * @param string $slug
+     *
+     * @return bool
+     */
+    public function slugExists($slug)
+    {
+        return isset($this->map[$slug]);
     }
 
     /**
@@ -238,15 +238,5 @@ class Map implements MapInterface
         $this->logger->info('Swivel - Parsing feature map.', compact('map'));
 
         return array_combine(array_keys($map), array_map([$this, 'reduceToBitmask'], $map));
-    }
-
-    /**
-     * Sets the callback
-     *
-     * @param callable $callback
-     */
-    public function setCallback(callable $callback)
-    {
-        $this->callback = $callback;
     }
 }

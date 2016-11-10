@@ -21,4 +21,11 @@ interface BucketInterface extends \Psr\Log\LoggerAwareInterface
      * @return int
      */
     public function getIndex();
+
+    /**
+     * Sets the callback
+     *
+     * @param callable $callback
+     */
+    public function setMissingSlugCallback(callable $callback);
 }
