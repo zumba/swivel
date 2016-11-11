@@ -106,14 +106,4 @@ class Bucket implements BucketInterface
     {
         return mt_rand(1, 10);
     }
-
-    /**
-     * Sets the callback
-     *
-     * @param callable $callback
-    */
-    public function setMissingSlugCallback(callable $callback)
-    {
-        $this->callback = $callback;
-    }
 }
