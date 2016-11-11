@@ -144,7 +144,7 @@ class Map implements MapInterface {
      *
      * @param string $slug
      *
-     * @return bool
+     * @return boolean
      */
     public function slugExists($slug)
     {
