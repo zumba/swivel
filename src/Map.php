@@ -138,7 +138,11 @@ class Map implements MapInterface
         $index = 1 << ($index - 1);
         foreach (explode(static::DELIMITER, $slug) as $child) {
             $key = empty($key) ? $child : $key.static::DELIMITER.$child;
-            if (!isset($map[$key]) || !($map[$key] & $index)) {
+
+            $isMissing = !$this->slugExists($key);
+            $isDisabled = $isMissing ?: !($map[$key] & $index);
+
+            if ($isMissing || $isDisabled) {
                 $this->logger->debug('Swivel - "'.$slug.'" is not enabled for bucket '.$index);
 
                 return false;
@@ -147,6 +151,18 @@ class Map implements MapInterface
         $this->logger->debug('Swivel - "'.$slug.'" is enabled for bucket '.$index);
 
         return true;
+    }
+
+    /**
+     * Check if a feature slug exists in the Map.
+     *
+     * @param string $slug
+     *
+     * @return bool
+     */
+    public function slugExists($slug)
+    {
+        return isset($this->map[$slug]);
     }
 
     /**

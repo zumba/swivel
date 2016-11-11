@@ -40,17 +40,30 @@ class Bucket implements BucketInterface
     protected $index;
 
     /**
+     * Callback to handle a missing slug from Map
+     *
+     * @var callable
+     */
+    protected $callback;
+
+    /**
      * Zumba\Swivel\Bucket.
      *
      * @param \Zumba\Swivel\MapInterface $featureMap
      * @param int|null                   $index
      * @param \Psr\Log\LoggerInterface   $logger
      */
-    public function __construct(MapInterface $featureMap, $index = null, LoggerInterface $logger = null)
-    {
+    public function __construct(
+        MapInterface $featureMap,
+        $index = null,
+        LoggerInterface $logger = null,
+        callable $callback = null
+    ) {
         $this->setLogger($logger ?: new NullLogger());
         $this->featureMap = $featureMap;
         $this->index = $index === null ? $this->randomIndex() : $index;
+        $this->callback = !is_null($callback) ? $callback : function () {
+        };
     }
 
     /**
@@ -64,7 +77,12 @@ class Bucket implements BucketInterface
      */
     public function enabled(BehaviorInterface $behavior)
     {
-        return $this->featureMap->enabled($behavior->getSlug(), $this->index);
+        $slug = $behavior->getSlug();
+
+        if (!$this->featureMap->slugExists($slug)) {
+            call_user_func($this->callback, $slug);
+        }
+        return $this->featureMap->enabled($slug, $this->index);
     }
 
     /**
