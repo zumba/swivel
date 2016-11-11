@@ -23,4 +23,33 @@ class BucketTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertSame('test_result', $bucket->enabled($behavior));
     }
+
+    /**
+     * @dataProvider slugProvider
+     */
+    public function testCallbackReceivedSlug($slug, $mapArray)
+    {
+        $map = new \Zumba\Swivel\Map($mapArray);
+        $behavior = new \Zumba\Swivel\Behavior($slug, function () {
+        });
+
+        $bucket = new Bucket($map, Bucket::FIRST, null, function ($slug_param) use ($slug) {
+            $this->assertEquals($slug, $slug_param);
+        });
+
+        $bucket->enabled($behavior);
+    }
+
+    public function slugProvider()
+    {
+        return [
+            [
+                'InvalidSlug',[
+                    'Test' => [1],
+                    'Test.version' => [1],
+                    'Test.version.a' => [1],
+                ],
+            ]
+        ];
+    }
 }

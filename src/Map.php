@@ -78,10 +78,10 @@ class Map implements MapInterface {
     }
 
     /**
-     * SetState 
+     * SetState
      *
      * Support reloading class via var_export definition.
-     * 
+     *
      * @param array $mapData Array of logger data needed to reconsturct logger
      * @return string        Implementaiton of logger class to be passed to the Map class
      */
@@ -124,14 +124,31 @@ class Map implements MapInterface {
         $key = '';
         $index = 1 << ($index - 1);
         foreach (explode(static::DELIMITER, $slug) as $child) {
-            $key = empty($key) ? $child : $key . static::DELIMITER . $child;
-            if (!isset($map[$key]) || !($map[$key] & $index)) {
-                $this->logger->debug('Swivel - "' . $slug . '" is not enabled for bucket ' . $index);
+            $key = empty($key) ? $child : $key.static::DELIMITER.$child;
+
+            $isMissing = !$this->slugExists($key);
+            $isDisabled = $isMissing ?: !($map[$key] & $index);
+
+            if ($isMissing || $isDisabled) {
+                $this->logger->debug('Swivel - "'.$slug.'" is not enabled for bucket '.$index);
+
                 return false;
             }
         }
         $this->logger->debug('Swivel - "' . $slug . '" is enabled for bucket ' . $index);
         return true;
+    }
+
+    /**
+     * Check if a feature slug exists in the Map.
+     *
+     * @param string $slug
+     *
+     * @return bool
+     */
+    public function slugExists($slug)
+    {
+        return isset($this->map[$slug]);
     }
 
     /**
