@@ -31,17 +31,26 @@ class Config implements ConfigInterface
     protected $metrics;
 
     /**
+     * Callback to handle a missing slug from Map
+     *
+     * @var callable
+     */
+    protected $callback;
+
+    /**
      * Zumba\Swivel\Config.
      *
      * @param mixed                         $map
      * @param int|null                      $index
      * @param \Psr\Log\LoggerInterface|null $logger
+     * @param callable|null                 $callback
      */
-    public function __construct($map = [], $index = null, LoggerInterface $logger = null)
+    public function __construct($map = [], $index = null, LoggerInterface $logger = null, $callback = null)
     {
         $this->setLogger($logger ?: $this->getLogger());
         $this->setMap($map);
         $this->index = $index;
+        $this->callback = $callback;
     }
 
     /**
@@ -51,7 +60,7 @@ class Config implements ConfigInterface
      */
     public function getBucket()
     {
-        return new Bucket($this->map, $this->index, $this->getLogger());
+        return new Bucket($this->map, $this->index, $this->getLogger(), $this->callback);
     }
 
     /**
