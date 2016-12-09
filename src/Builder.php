@@ -220,7 +220,7 @@ class Builder implements BuilderInterface
             };
             $strategy = $closure->bindTo(null, $strategy[0]);
         }
-        $slug = $this->slug.Map::DELIMITER.$slug;
+        $slug = empty($slug) ? $this->slug : $this->slug.Map::DELIMITER.$slug;
 
         return new Behavior($slug, $strategy, $this->logger);
     }
