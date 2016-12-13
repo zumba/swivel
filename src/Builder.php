@@ -151,13 +151,13 @@ class Builder implements BuilderInterface {
         if (!is_callable($strategy)) {
             $strategy = $this->makeCallable($strategy);
         }
-        $slug = $this->slug . Map::DELIMITER . $slug;
+        $slug = empty($slug) ? $this->slug : $this->slug.Map::DELIMITER.$slug;
         return new Behavior($slug, $strategy, $this->logger);
     }
 
     /**
      * Make a thing callable if it's protected or private or just a value to return
-     * 
+     *
      * @param mixed $strategy
      * @return \Closure
      */

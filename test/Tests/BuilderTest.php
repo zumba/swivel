@@ -129,9 +129,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
         $builder->setMetrics($this->getMock('Zumba\Swivel\MetricsInterface'));
         $builder->setLogger(new NullLogger());
+
         $behavior = $builder->getBehavior('a', $strategy);
         $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
-        $this->assertSame('Test' . Map::DELIMITER . 'a', $behavior->getSlug());
+        $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
+
+        $behavior = $builder->getBehavior('', $strategy);
+        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertSame('Test', $behavior->getSlug());
     }
 
     public function testGetBehaviorProtectedMethod() {
@@ -200,7 +205,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Used for testing that protected method is called with proper arguments
-     * 
+     *
      * @param string $arg1
      * @param string $arg2
      * @return string Args concatenated together
@@ -211,7 +216,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Used for testing that private method is called with proper arguments
-     * 
+     *
      * @param string $arg1
      * @param string $arg2
      * @return string Args concatenated together
@@ -222,7 +227,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Used for testing that protected static method is called with proper arguments
-     * 
+     *
      * @param string $arg1
      * @param string $arg2
      * @return string Args concatenated together
@@ -233,7 +238,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Used for testing that private static method is called with proper arguments
-     * 
+     *
      * @param string $arg1
      * @param string $arg2
      * @return string Args concatenated together
