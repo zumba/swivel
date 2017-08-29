@@ -127,7 +127,7 @@ class Map implements MapInterface {
             $key = empty($key) ? $child : $key.static::DELIMITER.$child;
 
             $isMissing = !$this->slugExists($key);
-            $isDisabled = $isMissing ?: !($map[$key] & $index);
+            $isDisabled = $isMissing ?: !((int)$map[$key] & $index);
 
             if ($isMissing || $isDisabled) {
                 $this->logger->debug('Swivel - "'.$slug.'" is not enabled for bucket '.$index);
