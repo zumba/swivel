@@ -100,6 +100,18 @@ class MapTest extends \PHPUnit_Framework_TestCase {
     public function parseProvider() {
         return [
             [
+                [ 'a' => [""] ],
+                [ 'a' => 0 ]
+            ],
+            [
+                [ 'a' => [0] ],
+                [ 'a' => 0 ]
+            ],
+            [
+                [ 'a' => [0, 1] ],
+                [ 'a' => Bucket::FIRST ]
+            ],
+            [
                 [ 'a' => [1] ],
                 [ 'a' => Bucket::FIRST ]
             ],
@@ -120,6 +132,13 @@ class MapTest extends \PHPUnit_Framework_TestCase {
 
     public function enabledProvider() {
         return [
+            [
+                'assertFalse', 'Test.version.a', 1, [
+                    'Test' => [],
+                    'Test.version' => [""],
+                    'Test.version.a' => [0]
+                ]
+            ],
             [
                 'assertTrue', 'Test.version.a', 1, [
                     'Test' => [1],
