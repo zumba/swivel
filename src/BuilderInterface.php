@@ -30,6 +30,29 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface
     public function defaultBehavior($strategy, array $args = []);
 
     /**
+     * Add a value to be returned when the builder is executed.
+     *
+     * Value will only be returned if it is enabled for the user's bucket.
+     *
+     * @param string $slug
+     * @param mixed  $value
+     *
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function addValue($slug, $value);
+
+    /**
+     * Add a default value.
+     *
+     * Will be used if all other behaviors and values are not enabled for the user's bucket.
+     *
+     * @param mixed $value
+     *
+     * @return \Zumba\Swivel\BuilderInterface
+     */
+    public function defaultValue($value);
+
+    /**
      * Creates a new Behavior object with an attached strategy.
      *
      * @param string $slug
