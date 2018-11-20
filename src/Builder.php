@@ -162,7 +162,6 @@ class Builder implements BuilderInterface
         if (!$this->behavior) {
             $callable = function () use ($value) {
                 return $value;
-
             };
             $this->setBehavior($this->getBehavior($callable));
         }
@@ -179,7 +178,6 @@ class Builder implements BuilderInterface
     {
         $behavior = $this->behavior ?: $this->getBehavior(function () {
             return;
-
         });
         $behaviorSlug = $behavior->getSlug();
 
