@@ -135,7 +135,7 @@ class Map implements MapInterface
     {
         $map = $this->map;
         $key = '';
-        $index = 1 << ($index - 1);
+        $index = (int)$index == 0 ? 0 : 1 << ($index - 1);
         foreach (explode(static::DELIMITER, $slug) as $child) {
             $key = empty($key) ? $child : $key.static::DELIMITER.$child;
 

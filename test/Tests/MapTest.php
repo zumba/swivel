@@ -205,6 +205,13 @@ class MapTest extends \PHPUnit_Framework_TestCase
                     'Test.version.a' => [3],
                 ],
             ],
+            [
+                'assertFalse', 'Test.version.a', 0, [
+                    'Test' => [],
+                    'Test.version' => [],
+                    'test.version.a' => [],
+                ]
+            ]
         ];
     }
 
