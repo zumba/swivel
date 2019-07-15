@@ -6,7 +6,6 @@ php:
   - 7.0
   - 7.1
   - 7.2
-  - hhvm
 
 before_script:
   - if [ $TRAVIS_PHP_VERSION = '7.0' ]; then composer require satooshi/php-coveralls; fi
