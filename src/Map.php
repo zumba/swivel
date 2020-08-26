@@ -226,7 +226,7 @@ class Map implements MapInterface
                 return $mask;
             }
             return $mask | (1 << ($index - 1));
-        });
+        }, 0);
     }
 
     /**
