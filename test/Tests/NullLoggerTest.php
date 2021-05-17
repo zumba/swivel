@@ -2,9 +2,10 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\TestCase;
 use Zumba\Swivel\Logging\NullLogger;
 
-class NullLoggerTest extends \PHPUnit_Framework_TestCase
+class NullLoggerTest extends TestCase
 {
     public function testSetStateNoData()
     {

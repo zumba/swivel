@@ -2,14 +2,15 @@
 
 namespace Tests\Integration;
 
+use PHPUnit\Framework\TestCase;
 use Zumba\Swivel\Config;
 use Zumba\Swivel\Manager;
 
-class SwivelTest extends \PHPUnit_Framework_TestCase
+class SwivelTest extends TestCase
 {
     protected $map;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->map = [
             'System' => [1, 2, 3, 4, 5],
