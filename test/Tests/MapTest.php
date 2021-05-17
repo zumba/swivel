@@ -2,15 +2,17 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\TestCase;
 use Zumba\Swivel\Map;
 use Zumba\Swivel\Bucket;
 
-class MapTest extends \PHPUnit_Framework_TestCase
+class MapTest extends TestCase
 {
     public function testNoLoggerAfterSerialization()
     {
         $serializedMap = serialize(new Map(['feature.test' => [1, 2, 3]]));
-        $this->assertNotContains('logger', $serializedMap);
+        $assertMethod = method_exists($this, 'assertStringNotContainsString') ? 'assertStringNotContainsString' : 'assertNotContains';
+        $this->$assertMethod('logger', $serializedMap);
     }
 
     /**

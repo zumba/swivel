@@ -2,9 +2,14 @@
 
 namespace Tests;
 
+use LogicException;
+use PHPUnit\Framework\TestCase;
 use Zumba\Swivel\Config;
+use Zumba\Swivel\DriverInterface;
+use Zumba\Swivel\MapInterface;
+use Zumba\Swivel\MetricsInterface;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function testGetBucket()
     {
@@ -34,7 +39,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $metrics->setAccessible(true);
         $this->assertNull($metrics->getValue($config));
 
-        $metricsInstance = $this->getMock('Zumba\Swivel\MetricsInterface');
+        $metricsInstance = $this->getMockBuilder(MetricsInterface::class)
+            ->getMock();
 
         $config->setMetrics($metricsInstance);
         $this->assertSame($metricsInstance, $metrics->getValue($config));
@@ -42,15 +48,18 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testAddMapInterface()
     {
-        $map = $this->getMock('Zumba\Swivel\MapInterface');
+        $map = $this->getMockBuilder(MapInterface::class)
+            ->getMock();
         $map->expects($this->once())->method('setLogger');
         $config = new Config($map);
     }
 
     public function testAddDriverInterface()
     {
-        $driver = $this->getMock('Zumba\Swivel\DriverInterface');
-        $map = $this->getMock('Zumba\Swivel\MapInterface');
+        $driver = $this->getMockBuilder(DriverInterface::class)
+            ->getMock();
+        $map = $this->getMockBuilder(MapInterface::class)
+            ->getMock();
 
         $driver
             ->expects($this->once())
@@ -61,11 +70,10 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $config = new Config($driver);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testUnknownObject()
     {
+        $this->expectException(LogicException::class);
+
         $config = new Config(new \stdClass());
     }
 }

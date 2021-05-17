@@ -2,13 +2,18 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
+use stdClass;
 use Zumba\Swivel\Behavior;
 
-class BehaviorTest extends \PHPUnit_Framework_TestCase
+class BehaviorTest extends TestCase
 {
     public function testExecute()
     {
-        $mock = $this->getMock('stdClass', ['callback']);
+        $mock = $this->getMockBuilder(stdClass::class)
+            ->setMethods(['callback'])
+            ->getMock();
         $mock->expects($this->once())
             ->method('callback')
             ->with('a', 'b')
@@ -20,7 +25,8 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteWithLogger()
     {
-        $logger = $this->getMock('Psr\Log\NullLogger');
+        $logger = $this->getMockBuilder(NullLogger::class)
+            ->getMock();
         $behavior = new Behavior('a', function () {
         });
         $behavior->setLogger($logger);

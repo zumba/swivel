@@ -7,11 +7,9 @@
 		 convertWarningsToExceptions="true"
 		 processIsolation="false"
 		 stopOnFailure="false"
-		 syntaxCheck="true"
-		 strict="true"
 		 colors="true">
 	<testsuites>
-		<testsuite>
+		<testsuite name="swivel tests">
 			<directory>./test</directory>
 		</testsuite>
 	</testsuites>
