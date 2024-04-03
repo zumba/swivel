@@ -11,7 +11,7 @@ interface BucketInterface extends \Psr\Log\LoggerAwareInterface
      *
      * @return bool
      */
-    public function enabled(BehaviorInterface $behavior);
+    public function enabled(BehaviorInterface $behavior): bool;
 
     /**
      * Get the bucket index.
@@ -20,5 +20,5 @@ interface BucketInterface extends \Psr\Log\LoggerAwareInterface
      *
      * @return int
      */
-    public function getIndex();
+    public function getIndex(): int;
 }

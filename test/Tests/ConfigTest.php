@@ -4,6 +4,7 @@ namespace Tests;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use Zumba\Swivel\Bucket;
 use Zumba\Swivel\Config;
 use Zumba\Swivel\DriverInterface;
 use Zumba\Swivel\MapInterface;
@@ -13,10 +14,9 @@ class ConfigTest extends TestCase
 {
     public function testGetBucket()
     {
-        $index = 4;
         $config = new Config(['A' => [7, 8, 9]], 4);
         $bucket = $config->getBucket();
-        $this->assertInstanceOf('Zumba\Swivel\Bucket', $bucket);
+        $this->assertInstanceOf(Bucket::class, $bucket);
     }
 
     public function testSetBucketIndex()

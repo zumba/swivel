@@ -2,7 +2,6 @@
 
 namespace Zumba\Swivel;
 
-use Zumba\Swivel\MapInterface;
 use Psr\Log\LoggerInterface;
 use Zumba\Swivel\Logging\NullLogger;
 
@@ -30,14 +29,14 @@ class Bucket implements BucketInterface
      *
      * @var Zumba\Swivel\MapInterface
      */
-    protected $featureMap;
+    protected MapInterface $featureMap;
 
     /**
      * The user's index.
      *
      * @var int Binary
      */
-    protected $index;
+    protected int $index;
 
     /**
      * Callback to handle a missing slug from Map
@@ -61,9 +60,8 @@ class Bucket implements BucketInterface
     ) {
         $this->setLogger($logger ?: new NullLogger());
         $this->featureMap = $featureMap;
-        $this->index = $index === null ? $this->randomIndex() : $index;
-        $this->callback = !is_null($callback) ? $callback : function () {
-        };
+        $this->index = $index ?: $this->randomIndex();
+        $this->callback = $callback ?: (fn() => null);
     }
 
     /**
@@ -75,12 +73,13 @@ class Bucket implements BucketInterface
      *
      * @see \Zumba\Swivel\BucketInterface
      */
-    public function enabled(BehaviorInterface $behavior)
+    public function enabled(BehaviorInterface $behavior): bool
     {
         $slug = $behavior->getSlug();
 
         if (!$this->featureMap->slugExists($slug)) {
-            call_user_func($this->callback, $slug);
+            $callback = $this->callback;
+            $callback($slug);
         }
         return $this->featureMap->enabled($slug, $this->index);
     }
@@ -92,7 +91,7 @@ class Bucket implements BucketInterface
      *
      * @return int
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
@@ -102,7 +101,7 @@ class Bucket implements BucketInterface
      *
      * @return int
      */
-    protected function randomIndex()
+    protected function randomIndex(): int
     {
         return mt_rand(1, 10);
     }

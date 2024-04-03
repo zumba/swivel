@@ -4,6 +4,7 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use Zumba\Swivel\Bucket;
+use Zumba\Swivel\Builder;
 use Zumba\Swivel\Manager;
 use Zumba\Swivel\Config;
 use Zumba\Swivel\Map;
@@ -21,7 +22,7 @@ class ManagerTest extends TestCase
             ->getMock();
 
         $manager->setBucket($bucket);
-        $this->assertInstanceOf('Zumba\Swivel\Builder', $manager->forFeature('Test'));
+        $this->assertInstanceOf(Builder::class, $manager->forFeature('Test'));
     }
 
     public function testSetBucketReturnsManager()
@@ -32,18 +33,18 @@ class ManagerTest extends TestCase
         $bucket = $this->getMockBuilder(Bucket::class)
             ->setConstructorArgs([$map])
             ->getMock();
-        $this->assertInstanceOf('Zumba\Swivel\Manager', $manager->setBucket($bucket));
+        $this->assertInstanceOf(Manager::class, $manager->setBucket($bucket));
     }
 
     public function testInvokeOneParamEnabled()
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -70,22 +71,19 @@ class ManagerTest extends TestCase
             ->method('execute')
             ->will($this->returnValue('abc'));
 
-        $this->assertEquals('abc', $manager->invoke('Test.version.a', function () {
-            return 'abc';
-
-        }));
+        $this->assertEquals('abc', $manager->invoke('Test.version.a', fn() => 'abc'));
     }
 
     public function testInvokeOneParamDisabled()
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -111,22 +109,19 @@ class ManagerTest extends TestCase
             ->expects($this->once())
             ->method('execute');
 
-        $this->assertEquals(null, $manager->invoke('Test.version.a', function () {
-            return 'abc';
-
-        }));
+        $this->assertEquals(null, $manager->invoke('Test.version.a', fn() => 'abc'));
     }
 
     public function testInvokeTwoParamEnabled()
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -155,12 +150,8 @@ class ManagerTest extends TestCase
 
         $this->assertEquals('abc', $manager->invoke(
             'Test.version.a',
-            function () {
-                return 'abc';
-            },
-            function () {
-                return 'default';
-            }
+            fn() => 'abc',
+            fn() => 'default'
         ));
     }
 
@@ -168,12 +159,12 @@ class ManagerTest extends TestCase
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -202,19 +193,15 @@ class ManagerTest extends TestCase
 
         $this->assertEquals('default', $manager->invoke(
             'Test.version.a',
-            function () {
-                return 'abc';
-            },
-            function () {
-                return 'default';
-            }
+            fn() => 'abc',
+            fn() => 'default'
         ));
     }
 
     public function testSetMetrics()
     {
         $config = $this->getMockBuilder(Config::class)
-            ->setMethods(['getMetrics'])
+            ->onlyMethods(['getMetrics'])
             ->getMock();
         $metricsInstance = $this->getMockBuilder(MetricsInterface::class)
             ->getMock();
@@ -235,12 +222,12 @@ class ManagerTest extends TestCase
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -274,12 +261,12 @@ class ManagerTest extends TestCase
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -312,12 +299,12 @@ class ManagerTest extends TestCase
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -351,12 +338,12 @@ class ManagerTest extends TestCase
     {
         $config = new Config();
         $manager = $this->getMockBuilder(Manager::class)
-            ->setMethods(['forFeature'])
+            ->onlyMethods(['forFeature'])
             ->setConstructorArgs([$config])
             ->getMock();
 
         $builder = $this
-            ->getMockBuilder('Zumba\Swivel\Builder')
+            ->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
 

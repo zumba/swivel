@@ -11,24 +11,22 @@ class Config implements ConfigInterface
 
     /**
      * Index of the user's bucket.
-     *
-     * @var int
      */
-    protected $index;
+    protected ?int $index;
 
     /**
      * Map of features.
      *
-     * @var \Zumba\Swivel\Map
+     * @var \Zumba\Swivel\Map|\Zumba\Swivel\DriverInterface
      */
-    protected $map;
+    protected $map = null;
 
     /**
      * Metrics object.
      *
      * @var \Zumba\Swivel\MetricsInterface
      */
-    protected $metrics;
+    protected ?MetricsInterface $metrics = null;
 
     /**
      * Callback to handle a missing slug from Map
@@ -39,14 +37,13 @@ class Config implements ConfigInterface
 
     /**
      * Zumba\Swivel\Config.
-     *
-     * @param mixed                         $map
-     * @param int|null                      $index
-     * @param \Psr\Log\LoggerInterface|null $logger
-     * @param callable|null                 $callback
      */
-    public function __construct($map = [], $index = null, LoggerInterface $logger = null, $callback = null)
-    {
+    public function __construct(
+        mixed $map = [],
+        ?int $index = null,
+        LoggerInterface $logger = null,
+        ?callable $callback = null
+    ) {
         $this->setLogger($logger ?: $this->getLogger());
         $this->setMap($map);
         $this->index = $index;
@@ -55,50 +52,40 @@ class Config implements ConfigInterface
 
     /**
      * Get a configured Bucket instance.
-     *
-     * @return \Zumba\Swivel\Bucket
      */
-    public function getBucket()
+    public function getBucket(): BucketInterface
     {
         return new Bucket($this->map, $this->index, $this->getLogger(), $this->callback);
     }
 
     /**
      * Get the PSR3 logger.
-     *
-     * @return \Psr\Log\LoggerInterface|null
      */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
         return $this->logger ?: new NullLogger();
     }
 
     /**
      * Get the Metrics object.
-     *
-     * @return \Zumba\Swivel\MetricsInterface
      */
-    public function getMetrics()
+    public function getMetrics(): ?MetricsInterface
     {
         return $this->metrics;
     }
 
     /**
      * Set the bucket index for the user.
-     *
-     * @param int $index
      */
-    public function setBucketIndex($index)
+    public function setBucketIndex(int $index): void
     {
         $this->index = $index;
     }
 
     /**
      * Set the Zumba\Swivel\Map object.
-     *
-     * @param mixed $map
      */
-    protected function setMap($map)
+    protected function setMap(mixed $map): void
     {
         $logger = $this->getLogger();
         if (is_array($map)) {
@@ -119,7 +106,7 @@ class Config implements ConfigInterface
      *
      * @param MetricsInterface $metrics
      */
-    public function setMetrics(MetricsInterface $metrics)
+    public function setMetrics(MetricsInterface $metrics): void
     {
         $this->metrics = $metrics;
     }

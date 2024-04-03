@@ -9,6 +9,7 @@ use Zumba\Swivel\Map;
 use Psr\Log\NullLogger;
 use Zumba\Swivel\Behavior;
 use Zumba\Swivel\Bucket;
+use Zumba\Swivel\BuilderInterface;
 use Zumba\Swivel\MetricsInterface;
 
 class BuilderTest extends TestCase
@@ -70,15 +71,14 @@ class BuilderTest extends TestCase
         $map = $this->getMockBuilder(Map::class)
             ->getMock();
         $bucket = $this->getMockBuilder(Bucket::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
-        $strategy = function () {
-        };
+        $strategy = fn () => null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs(['a', $strategy])
             ->getMock();
@@ -95,7 +95,7 @@ class BuilderTest extends TestCase
             ->with($behavior)
             ->will($this->returnValue(false));
 
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addBehavior('a', $strategy));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->addBehavior('a', $strategy));
     }
 
     public function testAddBehaviorEnabled()
@@ -103,16 +103,15 @@ class BuilderTest extends TestCase
         $map = $this->getMockBuilder(Map::class)
             ->getMock();
         $bucket = $this->getMockBuilder(Bucket::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior', 'setBehavior'])
+            ->onlyMethods(['getBehavior', 'setBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
 
-        $strategy = function () {
-        };
+        $strategy = fn() => null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs(['a', $strategy])
             ->getMock();
@@ -134,7 +133,7 @@ class BuilderTest extends TestCase
             ->with($behavior)
             ->will($this->returnValue(true));
 
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addBehavior('a', $strategy));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->addBehavior('a', $strategy));
     }
 
     public function testAddValueNotEnabled()
@@ -142,19 +141,17 @@ class BuilderTest extends TestCase
         $map = $this->getMockBuilder(Map::class)
             ->getMock();
         $bucket = $this->getMockBuilder(Bucket::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
         $value = null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs([
-                'a', function () use ($value) {
-                    return $value;
-                },
+                'a', fn() => $value,
             ])
             ->getMock();
 
@@ -170,7 +167,7 @@ class BuilderTest extends TestCase
             ->with($behavior)
             ->will($this->returnValue(false));
 
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addValue('a', $value));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->addValue('a', $value));
     }
 
     public function testAddValueEnabled()
@@ -178,20 +175,18 @@ class BuilderTest extends TestCase
         $map = $this->getMockBuilder(Map::class)
             ->getMock();
         $bucket = $this->getMockBuilder(Bucket::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior', 'setBehavior'])
+            ->onlyMethods(['getBehavior', 'setBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
 
         $value = null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs([
-                'a', function () use ($value) {
-                    return $value;
-                },
+                'a', fn() => $value,
             ])
             ->getMock();
 
@@ -213,7 +208,7 @@ class BuilderTest extends TestCase
             ->with($behavior)
             ->will($this->returnValue(true));
 
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->addValue('a', $value));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->addValue('a', $value));
     }
 
     public function testDefaultBehavior()
@@ -224,11 +219,10 @@ class BuilderTest extends TestCase
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
-        $strategy = function () {
-        };
+        $strategy = fn() => null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs([Builder::DEFAULT_SLUG, $strategy])
             ->getMock();
@@ -240,7 +234,7 @@ class BuilderTest extends TestCase
             ->will($this->returnValue($behavior));
 
         $builder->setLogger(new NullLogger());
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->defaultBehavior($strategy));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->defaultBehavior($strategy));
     }
 
     public function testDefaultValue()
@@ -251,16 +245,14 @@ class BuilderTest extends TestCase
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
         $value = null;
         $behavior = $this->getMockBuilder(Behavior::class)
             ->setConstructorArgs([
                 Builder::DEFAULT_SLUG,
-                function () use ($value) {
-                    return $value;
-                },
+                fn() => $value,
             ])
             ->getMock();
 
@@ -271,7 +263,7 @@ class BuilderTest extends TestCase
             ->will($this->returnValue($behavior));
 
         $builder->setLogger(new NullLogger());
-        $this->assertInstanceOf('Zumba\Swivel\BuilderInterface', $builder->defaultValue(null));
+        $this->assertInstanceOf(BuilderInterface::class, $builder->defaultValue(null));
     }
 
     public function testDefaultBehaviorThrowsIfNoDefaultCalledFirst()
@@ -286,8 +278,7 @@ class BuilderTest extends TestCase
         $builder = new Builder('Test', $bucket);
         $builder->setLogger(new NullLogger());
         $builder->noDefault();
-        $builder->defaultBehavior(function () {
-        });
+        $builder->defaultBehavior(fn() => null);
     }
 
     public function testDefaultValueThrowsIfNoDefaultCalledFirst()
@@ -315,13 +306,12 @@ class BuilderTest extends TestCase
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
-        $strategy = function () {
-        };
+        $strategy = fn() => null;
         $behavior = $this->getMockBuilder(Behavior::class)
-            ->setMethods(['getSlug'])
+            ->onlyMethods(['getSlug'])
             ->setConstructorArgs([Builder::DEFAULT_SLUG, $strategy])
             ->getMock();
 
@@ -350,17 +340,15 @@ class BuilderTest extends TestCase
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = $this->getMockBuilder(Builder::class)
-            ->setMethods(['getBehavior'])
+            ->onlyMethods(['getBehavior'])
             ->setConstructorArgs(['Test', $bucket])
             ->getMock();
         $value = 'test';
         $behavior = $this->getMockBuilder(Behavior::class)
-            ->setMethods(['getSlug'])
+            ->onlyMethods(['getSlug'])
             ->setConstructorArgs([
                 Builder::DEFAULT_SLUG,
-                function () use ($value) {
-                    return $value;
-                },
+                fn() => $value,
             ])
             ->getMock();
 
@@ -388,10 +376,7 @@ class BuilderTest extends TestCase
             ->getMock();
         $builder->setMetrics($metrics);
         $builder->setLogger(new NullLogger());
-        $builder->defaultBehavior(function () {
-            return 'abc';
-
-        });
+        $builder->defaultBehavior(fn() => 'abc');
         $this->assertSame('abc', $builder->execute());
     }
 
@@ -403,8 +388,7 @@ class BuilderTest extends TestCase
             ->setConstructorArgs([$map])
             ->getMock();
         $builder = new Builder('Test', $bucket);
-        $strategy = function () {
-        };
+        $strategy = fn() => null;
 
         $metrics = $this->getMockBuilder(MetricsInterface::class)
             ->getMock();
@@ -412,11 +396,11 @@ class BuilderTest extends TestCase
         $builder->setLogger(new NullLogger());
 
         $behavior = $builder->getBehavior('a', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
         $behavior = $builder->getBehavior('', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test', $behavior->getSlug());
 
     }
@@ -436,7 +420,7 @@ class BuilderTest extends TestCase
         $builder->setMetrics($metrics);
         $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
         $this->assertEquals(
@@ -461,7 +445,7 @@ class BuilderTest extends TestCase
         $builder->setMetrics($metrics);
         $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
         $this->assertEquals(
@@ -486,7 +470,7 @@ class BuilderTest extends TestCase
         $builder->setMetrics($metrics);
         $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
         $this->assertEquals(
@@ -511,7 +495,7 @@ class BuilderTest extends TestCase
         $builder->setMetrics($metrics);
         $builder->setLogger(new NullLogger());
         $behavior = $builder->getBehavior('a', $strategy);
-        $this->assertInstanceOf('Zumba\Swivel\Behavior', $behavior);
+        $this->assertInstanceOf(Behavior::class, $behavior);
         $this->assertSame('Test'.Map::DELIMITER.'a', $behavior->getSlug());
 
         $this->assertEquals(

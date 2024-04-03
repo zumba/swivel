@@ -13,7 +13,7 @@ class Behavior implements BehaviorInterface
      *
      * @var string
      */
-    protected $slug;
+    protected string $slug;
 
     /**
      * The strategy to be executed.
@@ -28,7 +28,7 @@ class Behavior implements BehaviorInterface
      * @param string   $slug
      * @param callable $strategy
      */
-    public function __construct($slug, callable $strategy)
+    public function __construct(string $slug, callable $strategy)
     {
         $this->slug = $slug;
         $this->strategy = $strategy;
@@ -43,14 +43,15 @@ class Behavior implements BehaviorInterface
      *
      * @see \Zumba\Swivel\BehaviorInterface
      */
-    public function execute(array $args = [])
+    public function execute(array $args = []): mixed
     {
         $slug = $this->slug;
         if ($this->logger) {
             $this->logger->debug('Swivel - Executing behavior.', compact('slug', 'args'));
         }
 
-        return call_user_func_array($this->strategy, $args);
+        $method = $this->strategy;
+        return $method(...$args);
     }
 
     /**
@@ -60,7 +61,7 @@ class Behavior implements BehaviorInterface
      *
      * @see \Zumba\Swivel\BehaviorInterface
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }

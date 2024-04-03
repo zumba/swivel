@@ -2,6 +2,8 @@
 
 namespace Zumba\Swivel;
 
+use Closure;
+
 interface MetricsInterface
 {
     /**
@@ -11,126 +13,68 @@ interface MetricsInterface
 
     /**
      * Send a count.
-     *
-     * @param string $context
-     * @param string $source
-     * @param int    $value
-     * @param string $metric
      */
-    public function count($context, $source, $value = 1, $metric = '');
+    public function count(string $context, string $source, int $value = 1, string $metric = ''): void;
 
     /**
      * Decrement a metric by 1.
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function decrement($context, $source, $metric = '');
+    public function decrement(string $context, string $source, string $metric = ''): void;
 
     /**
      * End the memory profiling and send the value.
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function endMemoryProfile($context, $source, $metric = '');
+    public function endMemoryProfile(string $context, string $source, string $metric = ''): void;
 
     /**
      * End the timing for a metric and send the value.
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function endTiming($context, $source, $metric = '');
+    public function endTiming(string $context, string $source, string $metric = ''): void;
 
     /**
      * Send a gauged metric.
-     *
-     * @param string $context
-     * @param string $source
-     * @param int    $value
-     * @param string $metric
      */
-    public function gauge($context, $source, $value = 0, $metric = '');
+    public function gauge(string $context, string $source, int $value = 0, string $metric = ''): void;
 
     /**
      * Increment the metric by 1.
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function increment($context, $source, $metric = '');
+    public function increment(string $context, string $source, string $metric = ''): void;
 
     /**
      * Report memory usage.
      *
      * If $memory is null, report peak usage
-     *
-     * @param string   $context
-     * @param string   $source
-     * @param int|null $memory
-     * @param string   $metric
      */
-    public function memory($context, $source, $memory = null, $metric = '');
+    public function memory(string $context, string $source, ?int $memory = null, string $metric = ''): void;
 
     /**
      * Send a unique metric.
-     *
-     * @param string $context
-     * @param string $source
-     * @param int    $value
-     * @param string $metric
      */
-    public function set($context, $source, $value = 0, $metric = '');
+    public function set(string $context, string $source, int $value = 0, string $metric = ''): void;
 
     /**
      * Set the slug namespace.
-     *
-     * @param string $namespace
      */
-    public function setNamespace($namespace = self::DEFAULT_NAMESPACE);
+    public function setNamespace(string $namespace = self::DEFAULT_NAMESPACE): void;
 
     /**
      * Start memory "profiling".
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function startMemoryProfile($context, $source, $metric = '');
+    public function startMemoryProfile(string $context, string $source, string $metric = ''): void;
 
     /**
      * Starts timing a metric.
-     *
-     * @param string $context
-     * @param string $source
-     * @param string $metric
      */
-    public function startTiming($context, $source, $metric = '');
+    public function startTiming(string $context, string $source, string $metric = ''): void;
 
     /**
      * Execute, measure execution time, and return a \Closure's return value.
-     *
-     * @param string   $context
-     * @param string   $source
-     * @param \Closure $func
-     * @param string   $metric
-     *
-     * @return mixed
      */
-    public function time($context, $source, \Closure $func, $metric = '');
+    public function time(string $context, string $source, Closure $func, string $metric = ''): mixed;
 
     /**
      * Send a timing metric.
-     *
-     * @param string $context
-     * @param string $source
-     * @param int    $value
-     * @param string $metric
      */
-    public function timing($context, $source, $value = 0, $metric = '');
+    public function timing(string $context, string $source, int $value = 0, string $metric = ''): void;
 }

@@ -12,7 +12,7 @@ class BehaviorTest extends TestCase
     public function testExecute()
     {
         $mock = $this->getMockBuilder(stdClass::class)
-            ->setMethods(['callback'])
+            ->addMethods(['callback'])
             ->getMock();
         $mock->expects($this->once())
             ->method('callback')
@@ -27,8 +27,7 @@ class BehaviorTest extends TestCase
     {
         $logger = $this->getMockBuilder(NullLogger::class)
             ->getMock();
-        $behavior = new Behavior('a', function () {
-        });
+        $behavior = new Behavior('a', fn() => null);
         $behavior->setLogger($logger);
 
         $logger->expects($this->once())
