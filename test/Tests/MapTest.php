@@ -135,6 +135,10 @@ class MapTest extends TestCase
                 ['a' => Bucket::SIXTH | Bucket::SEVENTH, 'a.b' => Bucket::SEVENTH],
             ],
             [
+                ['a' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+                ['a' => Bucket::ALL],
+            ],
+            [
                 ['a' => Bucket::FIRST],
                 ['a' => Bucket::FIRST],
             ],
