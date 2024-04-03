@@ -221,12 +221,17 @@ class Map implements MapInterface
     {
         $this->logger->debug('Swivel - reducing to bitmask.', compact('list'));
 
-        return !is_array($list) ? $list : array_reduce($list, function ($mask, $index) {
-            if ((int)$index == 0) {
-                return $mask;
+        if (!is_array($list)) {
+            return $list;
+        }
+
+        $mask = 0;
+        foreach ($list as $value) {
+            if ($value > 0) {
+                $mask |= (1 << ((int)$value - 1));
             }
-            return $mask | (1 << ($index - 1));
-        }, 0);
+        }
+        return $mask;
     }
 
     /**
