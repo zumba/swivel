@@ -11,12 +11,12 @@ interface BehaviorInterface extends \Psr\Log\LoggerAwareInterface
      *
      * @return mixed
      */
-    public function execute(array $args = []);
+    public function execute(array $args = []): mixed;
 
     /**
      * Get the behavior's slug.
      *
      * @return string
      */
-    public function getSlug();
+    public function getSlug(): string;
 }

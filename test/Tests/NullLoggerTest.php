@@ -10,12 +10,12 @@ class NullLoggerTest extends TestCase
     public function testSetStateNoData()
     {
         $nullLogger = NullLogger::__set_state([]);
-        $this->assertInstanceOf('\Zumba\Swivel\Logging\NullLogger', $nullLogger);
+        $this->assertInstanceOf(NullLogger::class, $nullLogger);
     }
 
     public function testSetStateData()
     {
         $nullLogger = NullLogger::__set_state(['some' => 'data']);
-        $this->assertInstanceOf('\Zumba\Swivel\Logging\NullLogger', $nullLogger);
+        $this->assertInstanceOf(NullLogger::class, $nullLogger);
     }
 }

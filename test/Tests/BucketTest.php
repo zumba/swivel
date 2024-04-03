@@ -12,25 +12,25 @@ class BucketTest extends TestCase
     public function testEnabledDelegatesToMap()
     {
         $map = $this->getMockBuilder(Map::class)
-            ->setMethods(['enabled'])
+            ->onlyMethods(['enabled'])
             ->getMock();
         $behavior = $this->getMockBuilder(Behavior::class)
-            ->setMethods(['getSlug'])
-            ->setConstructorArgs(['test', function () {}])
+            ->onlyMethods(['getSlug'])
+            ->setConstructorArgs(['test', fn() => null])
             ->getMock();
         $bucket = new Bucket($map, Bucket::FIFTH);
 
         $map->expects($this->once())
             ->method('enabled')
             ->with('Test.test', Bucket::FIFTH)
-            ->will($this->returnValue('test_result'));
+            ->will($this->returnValue(true));
 
         $behavior
             ->expects($this->once())
             ->method('getSlug')
             ->will($this->returnValue('Test.test'));
 
-        $this->assertSame('test_result', $bucket->enabled($behavior));
+        $this->assertTrue($bucket->enabled($behavior));
     }
 
     /**
@@ -39,12 +39,9 @@ class BucketTest extends TestCase
     public function testCallbackReceivedSlug($slug, $mapArray)
     {
         $map = new \Zumba\Swivel\Map($mapArray);
-        $behavior = new \Zumba\Swivel\Behavior($slug, function () {
-        });
+        $behavior = new \Zumba\Swivel\Behavior($slug, fn() => null);
 
-        $bucket = new Bucket($map, Bucket::FIRST, null, function ($slug_param) use ($slug) {
-            $this->assertEquals($slug, $slug_param);
-        });
+        $bucket = new Bucket($map, Bucket::FIRST, null, fn($slug_param) => $this->assertEquals($slug, $slug_param));
 
         $bucket->enabled($behavior);
     }

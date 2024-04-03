@@ -33,12 +33,8 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, 4));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () {
-                return 'NewHotness';
-            })
-            ->defaultBehavior(function () {
-                return 'OldAndBusted';
-            })
+            ->addBehavior('NewAlgorithm', fn() => 'NewHotness')
+            ->defaultBehavior(fn() => 'OldAndBusted')
             ->execute();
 
         $this->assertSame('NewHotness', $result);
@@ -48,12 +44,8 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, 9));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () {
-                return 'NewHotness';
-            })
-            ->defaultBehavior(function () {
-                return 'OldAndBusted';
-            })
+            ->addBehavior('NewAlgorithm', fn() => 'NewHotness')
+            ->defaultBehavior(fn() => 'OldAndBusted')
             ->execute();
 
         $this->assertSame('OldAndBusted', $result);
@@ -77,12 +69,8 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('OldFeature')
-            ->addBehavior('Legacy', function () {
-                return 'AlwaysOn';
-            })
-            ->defaultBehavior(function () {
-                return 'NeverOn';
-            })
+            ->addBehavior('Legacy', fn() => 'AlwaysOn')
+            ->defaultBehavior(fn() => 'NeverOn')
             ->execute();
 
         $this->assertSame('AlwaysOn', $result);
@@ -95,12 +83,8 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('BadIdea')
-            ->addBehavior('Implementation', function () {
-                return 'IsOn?';
-            })
-            ->defaultBehavior(function () {
-                return 'NeverOn';
-            })
+            ->addBehavior('Implementation', fn() => 'IsOn?')
+            ->defaultBehavior(fn() => 'NeverOn')
             ->execute();
 
         $this->assertSame('NeverOn', $result);
@@ -110,12 +94,8 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->forFeature('ParentOff')
-            ->addBehavior('ChildOn', function () {
-                return 'NeverWorks';
-            })
-            ->defaultBehavior(function () {
-                return 'AlwaysDefault';
-            })
+            ->addBehavior('ChildOn', fn() => 'NeverWorks')
+            ->defaultBehavior(fn() => 'AlwaysDefault')
             ->execute();
 
         $this->assertSame('AlwaysDefault', $result);
@@ -126,14 +106,8 @@ class SwivelTest extends TestCase
      */
     public function testBranchingChildren($bucket, $assertOne, $assertTwo, $assertThree, $assertFour)
     {
-        $on = function () {
-            return true;
-
-        };
-        $off = function () {
-            return false;
-
-        };
+        $on = fn() => true;
+        $off = fn() => false;
         $swivel = new Manager(new Config($this->map, $bucket));
         $result = $swivel->forFeature('NewFeature')
             ->addBehavior('SimpleStuff', $on)
@@ -169,12 +143,8 @@ class SwivelTest extends TestCase
         $swivel = new Manager(new Config($this->map, 1));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function () {
-                return 'NewHotness';
-            },
-            function () {
-                return 'OldAndBusted';
-            }
+            fn() => 'NewHotness',
+            fn() => 'OldAndBusted'
         );
         $this->assertSame('NewHotness', $result);
     }
@@ -184,12 +154,8 @@ class SwivelTest extends TestCase
         $swivel = new Manager(new Config($this->map, 10));
         $result = $swivel->invoke(
             'System.NewAlgorithm',
-            function () {
-                return 'NewHotness';
-            },
-            function () {
-                return 'OldAndBusted';
-            }
+            fn() => 'NewHotness',
+            fn() => 'OldAndBusted'
         );
         $this->assertSame('OldAndBusted', $result);
     }
@@ -197,20 +163,14 @@ class SwivelTest extends TestCase
     public function testInvokeSystemNewAlgorithmValidBucketNoDefault()
     {
         $swivel = new Manager(new Config($this->map, 1));
-        $result = $swivel->invoke('System.NewAlgorithm', function () {
-            return 'NewHotness';
-
-        });
+        $result = $swivel->invoke('System.NewAlgorithm', fn() => 'NewHotness');
         $this->assertSame('NewHotness', $result);
     }
 
     public function testInvokeSystemNewAlgorithmInvalidBucketNoDefault()
     {
         $swivel = new Manager(new Config($this->map, 10));
-        $result = $swivel->invoke('System.NewAlgorithm', function () {
-            return 'NewHotness';
-
-        });
+        $result = $swivel->invoke('System.NewAlgorithm', fn() => 'NewHotness');
         $this->assertSame(null, $result);
     }
 
@@ -218,9 +178,7 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, 2));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () {
-                return 'NewHotness';
-            })
+            ->addBehavior('NewAlgorithm', fn() => 'NewHotness')
             ->noDefault()
             ->execute();
 
@@ -231,9 +189,7 @@ class SwivelTest extends TestCase
     {
         $swivel = new Manager(new Config($this->map, 8));
         $result = $swivel->forFeature('System')
-            ->addBehavior('NewAlgorithm', function () {
-                return 'NewHotness';
-            })
+            ->addBehavior('NewAlgorithm', fn() => 'NewHotness')
             ->noDefault()
             ->execute();
 
@@ -246,9 +202,7 @@ class SwivelTest extends TestCase
     public function testFalseyValuesAllowedInBehaviors($falseyValue)
     {
         $swivel = new Manager(new Config($this->map, 10));
-        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', function () use ($falseyValue) {
-            return $falseyValue;
-        }));
+        $this->assertSame($falseyValue, $swivel->invoke('OldFeature.Legacy', fn() => $falseyValue));
     }
 
     /**

@@ -34,7 +34,7 @@ class NullLogger extends PsrNullLogger
      *
      * @return string Implementaiton of logger class to be passed to the Map class
      */
-    public static function __set_state($objData = array())
+    public static function __set_state($objData = [])
     {
         return new static();
     }

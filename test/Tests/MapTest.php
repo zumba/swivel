@@ -3,6 +3,7 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Zumba\Swivel\Map;
 use Zumba\Swivel\Bucket;
 
@@ -27,7 +28,7 @@ class MapTest extends TestCase
         $loggerReflProperty = $reflObject->getProperty('logger');
         $loggerReflProperty->setAccessible(true);
         $logger = $loggerReflProperty->getValue($map);
-        $this->assertInstanceOf('\Psr\Log\LoggerInterface', $logger);
+        $this->assertInstanceOf(LoggerInterface::class, $logger);
     }
 
     /**

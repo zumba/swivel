@@ -8,17 +8,13 @@ class Manager implements ManagerInterface
 
     /**
      * A configured Bucket instance.
-     *
-     * @var \Zumba\Swivel\BucketInterface
      */
-    protected $bucket;
+    protected ?BucketInterface $bucket = null;
 
     /**
      * A metrics object.
-     *
-     * @var \Zumba\Swivel\MetricsInterface
      */
-    protected $metrics;
+    protected ?MetricsInterface $metrics = null;
 
     /**
      * Zumba\Swivel\Manager.
@@ -40,13 +36,9 @@ class Manager implements ManagerInterface
     /**
      * Create a new Builder instance.
      *
-     * @param string $slug
-     *
-     * @return \Zumba\Swivel\Builder
-     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function forFeature($slug)
+    public function forFeature(string $slug): BuilderInterface
     {
         $this->logger->debug('Swivel - Generating builder for feature "'.$slug.'"');
         $builder = new Builder($slug, $this->bucket);
@@ -62,24 +54,15 @@ class Manager implements ManagerInterface
      *
      * Uses Builder::addBehavior
      *
-     * @param string   $slug
-     * @param callable $a
-     * @param callable $b
-     *
-     * @return mixed
-     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function invoke($slug, $a, $b = null)
+    public function invoke(string $slug, mixed $a, mixed $b = null): mixed
     {
-        $parts = explode(Map::DELIMITER, $slug);
-        $feature = array_shift($parts);
+        list($feature, $behavior) = explode(Map::DELIMITER, $slug, 2);
 
         return $this->forFeature($feature)
-            ->addBehavior(implode(Map::DELIMITER, $parts), $a)
-            ->defaultBehavior($b ? $b : function () use ($b) {
-                return $b;
-            })
+            ->addBehavior($behavior, $a)
+            ->defaultBehavior($b ?: fn() => $b)
             ->execute();
     }
 
@@ -88,21 +71,14 @@ class Manager implements ManagerInterface
      *
      * Uses Builder::addValue
      *
-     * @param string $slug
-     * @param mixed  $a
-     * @param mixed  $b
-     *
-     * @return mixed
-     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function returnValue($slug, $a, $b = null)
+    public function returnValue(string $slug, mixed $a, mixed $b = null): mixed
     {
-        $parts = explode(Map::DELIMITER, $slug);
-        $feature = array_shift($parts);
+        list($feature, $behavior) = explode(Map::DELIMITER, $slug, 2);
 
         return $this->forFeature($feature)
-            ->addValue(implode(Map::DELIMITER, $parts), $a)
+            ->addValue($behavior, $a)
             ->defaultValue($b)
             ->execute();
     }
@@ -110,13 +86,9 @@ class Manager implements ManagerInterface
     /**
      * Set the Swivel Bucket.
      *
-     * @param \Zumba\Swivel\BucketInterface $bucket
-     *
-     * @return \Zumba\Swivel\ManagerInterface
-     *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function setBucket(BucketInterface $bucket = null)
+    public function setBucket(BucketInterface $bucket = null): ManagerInterface
     {
         if ($bucket) {
             $this->bucket = $bucket;
@@ -131,7 +103,7 @@ class Manager implements ManagerInterface
      *
      * @param MetricsInterface $metrics
      */
-    protected function setMetrics(MetricsInterface $metrics)
+    protected function setMetrics(MetricsInterface $metrics): void
     {
         $this->metrics = $metrics;
     }
