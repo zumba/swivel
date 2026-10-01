@@ -55,8 +55,8 @@ class Bucket implements BucketInterface
     public function __construct(
         MapInterface $featureMap,
         $index = null,
-        LoggerInterface $logger = null,
-        callable $callback = null
+        ?LoggerInterface $logger = null,
+        ?callable $callback = null
     ) {
         $this->setLogger($logger ?: new NullLogger());
         $this->featureMap = $featureMap;
