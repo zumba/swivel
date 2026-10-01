@@ -48,9 +48,9 @@ class Bucket implements BucketInterface
     /**
      * Zumba\Swivel\Bucket.
      *
-     * @param \Zumba\Swivel\MapInterface $featureMap
-     * @param int|null                   $index
-     * @param \Psr\Log\LoggerInterface   $logger
+     * @param \Zumba\Swivel\MapInterface    $featureMap
+     * @param int|null                      $index
+     * @param \Psr\Log\LoggerInterface|null $logger
      */
     public function __construct(
         MapInterface $featureMap,
