@@ -41,7 +41,7 @@ class Config implements ConfigInterface
     public function __construct(
         mixed $map = [],
         ?int $index = null,
-        LoggerInterface $logger = null,
+        ?LoggerInterface $logger = null,
         ?callable $callback = null
     ) {
         $this->setLogger($logger ?: $this->getLogger());

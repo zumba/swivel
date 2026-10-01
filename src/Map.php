@@ -28,10 +28,10 @@ class Map implements MapInterface
      *   'FeatureA.Behavior2' => [4, 5, 6],
      * ]
      *
-     * @param array                    $map
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param array                         $map
+     * @param \Psr\Log\LoggerInterface|null $logger
      */
-    public function __construct(array $map = [], LoggerInterface $logger = null)
+    public function __construct(array $map = [], ?LoggerInterface $logger = null)
     {
         $this->setLogger($logger ?: new NullLogger());
         $this->map = $this->parse($map);

@@ -17,5 +17,5 @@ interface ManagerInterface extends \Psr\Log\LoggerAwareInterface
     /**
      * Set the Swivel Bucket.
      */
-    public function setBucket(BucketInterface $bucket = null): ManagerInterface;
+    public function setBucket(?BucketInterface $bucket = null): ManagerInterface;
 }

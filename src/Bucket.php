@@ -48,15 +48,15 @@ class Bucket implements BucketInterface
     /**
      * Zumba\Swivel\Bucket.
      *
-     * @param \Zumba\Swivel\MapInterface $featureMap
-     * @param int|null                   $index
-     * @param \Psr\Log\LoggerInterface   $logger
+     * @param \Zumba\Swivel\MapInterface    $featureMap
+     * @param int|null                      $index
+     * @param \Psr\Log\LoggerInterface|null $logger
      */
     public function __construct(
         MapInterface $featureMap,
         $index = null,
-        LoggerInterface $logger = null,
-        callable $callback = null
+        ?LoggerInterface $logger = null,
+        ?callable $callback = null
     ) {
         $this->setLogger($logger ?: new NullLogger());
         $this->featureMap = $featureMap;
