@@ -45,7 +45,7 @@ class Config implements ConfigInterface
      * @param \Psr\Log\LoggerInterface|null $logger
      * @param callable|null                 $callback
      */
-    public function __construct($map = [], $index = null, LoggerInterface $logger = null, $callback = null)
+    public function __construct($map = [], $index = null, ?LoggerInterface $logger = null, $callback = null)
     {
         $this->setLogger($logger ?: $this->getLogger());
         $this->setMap($map);

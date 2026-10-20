@@ -31,7 +31,7 @@ class Map implements MapInterface
      * @param array                    $map
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(array $map = [], LoggerInterface $logger = null)
+    public function __construct(array $map = [], ?LoggerInterface $logger = null)
     {
         $this->setLogger($logger ?: new NullLogger());
         $this->map = $this->parse($map);

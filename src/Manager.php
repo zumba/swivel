@@ -116,7 +116,7 @@ class Manager implements ManagerInterface
      *
      * @see \Zumba\Swivel\ManagerInterface
      */
-    public function setBucket(BucketInterface $bucket = null)
+    public function setBucket(?BucketInterface $bucket = null)
     {
         if ($bucket) {
             $this->bucket = $bucket;

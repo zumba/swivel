@@ -31,5 +31,5 @@ interface ManagerInterface extends \Psr\Log\LoggerAwareInterface
      *
      * @return \Zumba\Swivel\ManagerInterface
      */
-    public function setBucket(BucketInterface $bucket = null);
+    public function setBucket(?BucketInterface $bucket = null);
 }
