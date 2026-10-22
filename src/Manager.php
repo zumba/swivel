@@ -58,7 +58,7 @@ class Manager implements ManagerInterface
      */
     public function invoke(string $slug, mixed $a, mixed $b = null): mixed
     {
-        list($feature, $behavior) = explode(Map::DELIMITER, $slug, 2);
+        [$feature, $behavior] = $this->splitSlug($slug);
 
         return $this->forFeature($feature)
             ->addBehavior($behavior, $a)
@@ -75,12 +75,27 @@ class Manager implements ManagerInterface
      */
     public function returnValue(string $slug, mixed $a, mixed $b = null): mixed
     {
-        list($feature, $behavior) = explode(Map::DELIMITER, $slug, 2);
+        [$feature, $behavior] = $this->splitSlug($slug);
 
         return $this->forFeature($feature)
             ->addValue($behavior, $a)
             ->defaultValue($b)
             ->execute();
+    }
+
+    /**
+     * Split a slug into its feature and behavior parts.
+     *
+     * A slug without a delimiter names the feature itself: its behavior part is
+     * empty, which the Builder resolves to the feature's own slug. This keeps
+     * invoke('Feature', ...) and returnValue('Feature', ...) working as they did
+     * before 5.0, when the slug was split with explode()/array_shift().
+     *
+     * @return array{0: string, 1: string}
+     */
+    protected function splitSlug(string $slug): array
+    {
+        return array_pad(explode(Map::DELIMITER, $slug, 2), 2, '');
     }
 
     /**

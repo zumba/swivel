@@ -372,4 +372,100 @@ class ManagerTest extends TestCase
 
         $this->assertEquals('default', $manager->returnValue('Test.version.a', 'abc', 'default'));
     }
+
+    public function testInvokeBareSlugEnabled()
+    {
+        $config = new Config();
+        $manager = $this->getMockBuilder(Manager::class)
+            ->onlyMethods(['forFeature'])
+            ->setConstructorArgs([$config])
+            ->getMock();
+        $builder = $this
+            ->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager
+            ->expects($this->once())
+            ->method('forFeature')
+            ->with('Test')
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('addBehavior')
+            ->with('', $this->isType('callable'))
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('defaultBehavior')
+            ->with($this->isType('callable'))
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue('abc'));
+
+        $this->assertEquals('abc', $manager->invoke('Test', fn() => 'abc'));
+    }
+
+    public function testReturnValueBareSlug()
+    {
+        $config = new Config();
+        $manager = $this->getMockBuilder(Manager::class)
+            ->onlyMethods(['forFeature'])
+            ->setConstructorArgs([$config])
+            ->getMock();
+        $builder = $this
+            ->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager
+            ->expects($this->once())
+            ->method('forFeature')
+            ->with('Test')
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('addValue')
+            ->with('', 'abc')
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('defaultValue')
+            ->with('def')
+            ->will($this->returnValue($builder));
+
+        $builder
+            ->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue('abc'));
+
+        $this->assertEquals('abc', $manager->returnValue('Test', 'abc', 'def'));
+    }
+
+    /**
+     * A bare slug toggles on the feature itself, end to end through Config, Map and Bucket.
+     */
+    public function testBareSlugResolvesToTheFeature()
+    {
+        $map = ['On' => [1, 2, 3], 'Off' => [], 'On.child' => [1, 2, 3]];
+
+        $manager = new Manager(new Config($map, 1));
+        $this->assertSame('yes', $manager->returnValue('On', 'yes', 'no'));
+        $this->assertSame('no', $manager->returnValue('Off', 'yes', 'no'));
+        $this->assertSame('yes', $manager->invoke('On', fn() => 'yes', fn() => 'no'));
+        $this->assertSame('no', $manager->invoke('Off', fn() => 'yes', fn() => 'no'));
+        $this->assertSame('yes', $manager->returnValue('On.child', 'yes', 'no'));
+        $this->assertNull($manager->returnValue('Off', 'yes'));
+
+        $manager = new Manager(new Config($map, 5));
+        $this->assertSame('no', $manager->returnValue('On', 'yes', 'no'));
+        $this->assertSame('no', $manager->invoke('On', fn() => 'yes', fn() => 'no'));
+    }
 }
