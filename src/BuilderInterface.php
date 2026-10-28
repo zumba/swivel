@@ -34,8 +34,11 @@ interface BuilderInterface extends \Psr\Log\LoggerAwareInterface
 
     /**
      * Creates a new Behavior object with an attached strategy.
+     *
+     * Builder also accepts an array callable to a non-public method as $slug and binds it itself; the interface keeps
+     * the 6.0.0 signature so existing implementations (swivel-cake, primer) stay compatible with a patch release.
      */
-    public function getBehavior(string|callable|array $slug, mixed $strategy = null): BehaviorInterface;
+    public function getBehavior(string|callable $slug, mixed $strategy = null): BehaviorInterface;
 
     /**
      * Indicates that the feature has no default behavior.
