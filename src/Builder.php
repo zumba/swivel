@@ -144,8 +144,10 @@ class Builder implements BuilderInterface
      *
      * The $strategy parameter must be a valid callable.
      */
-    public function getBehavior(string|callable $slug, mixed $strategy = self::DEFAULT_STRATEGY): BehaviorInterface
-    {
+    public function getBehavior(
+        string|callable|array $slug,
+        mixed $strategy = self::DEFAULT_STRATEGY
+    ): BehaviorInterface {
         $this->logger->debug('Swivel - Creating new behavior.', compact('slug'));
         if ($strategy === static::DEFAULT_STRATEGY) {
             $strategy = $slug;
