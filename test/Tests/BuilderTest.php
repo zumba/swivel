@@ -266,6 +266,42 @@ class BuilderTest extends TestCase
         $this->assertInstanceOf(BuilderInterface::class, $builder->defaultValue(null));
     }
 
+    public function testGetBehaviorAcceptsProtectedMethodCallableAsStrategy()
+    {
+        $map = $this->getMockBuilder(Map::class)
+            ->getMock();
+        $bucket = $this->getMockBuilder(Bucket::class)
+            ->setConstructorArgs([$map])
+            ->getMock();
+        $builder = new Builder('Test', $bucket);
+        $builder->setLogger(new NullLogger());
+
+        // defaultBehavior() and Manager::invoke() pass the strategy as the first argument; an array callable to a
+        // protected method is not `callable` from this scope and must still be accepted (regression from 6.0.0)
+        $behavior = $builder->getBehavior([$this, 'protectedMethod']);
+        $this->assertInstanceOf(Behavior::class, $behavior);
+        $this->assertSame('Test'.Map::DELIMITER.Builder::DEFAULT_SLUG, $behavior->getSlug());
+        $this->assertEquals('ArgaArgb', $behavior->execute(['Arga', 'Argb']));
+    }
+
+    public function testDefaultBehaviorAcceptsProtectedMethodCallable()
+    {
+        $map = $this->getMockBuilder(Map::class)
+            ->getMock();
+        $bucket = $this->getMockBuilder(Bucket::class)
+            ->setConstructorArgs([$map])
+            ->getMock();
+        $bucket->method('enabled')->willReturn(false);
+        $builder = new Builder('Test', $bucket);
+        $builder->setLogger(new NullLogger());
+
+        $result = $builder
+            ->addBehavior('a', [$this, 'privateMethod'], ['x', 'y'])
+            ->defaultBehavior([$this, 'protectedMethod'], ['Arga', 'Argb'])
+            ->execute();
+        $this->assertEquals('ArgaArgb', $result, 'The protected default behavior runs when no behavior is enabled');
+    }
+
     public function testDefaultBehaviorThrowsIfNoDefaultCalledFirst()
     {
         $this->expectException(LogicException::class);
